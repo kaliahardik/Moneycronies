@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moneycronies — Dive Deeper Into Businesses</title>
+  <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav" id="siteNav" aria-label="Main navigation">
+    <div class="nav-logo">Money<span>cronies</span></div>
+    <ul class="nav-links">
+      <li><a href="portfolio.html#pieces">Pieces</a></li>
+      <li><a href="portfolio.html#experience">Experience</a></li>
+      <li><a href="portfolio.html#belief">Belief</a></li>
+      <li><a href="portfolio.html#library">Library</a></li>
+      <li><a href="portfolio.html#about">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero Stage ── -->
+  <section class="hero-stage" aria-label="Hero">
+
+    <!-- Turtle scene -->
+    <div class="turtle-scene" aria-hidden="true">
+      <div class="turtle-wrapper" id="turtleWrapper">
+        <!-- Ripple rings -->
+        <div class="ripple"></div>
+        <div class="ripple"></div>
+        <div class="ripple"></div>
+        <!-- SVG Turtle -->
+        <svg id="turtleSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+             width="100%" height="100%" style="overflow:visible;">
+
+          <!-- Shadow under turtle -->
+          <ellipse cx="100" cy="185" rx="40" ry="8" fill="rgba(10,77,110,0.12)" />
+
+          <!-- Shell base -->
+          <ellipse cx="100" cy="105" rx="52" ry="42" fill="#1A6B3C" />
+
+          <!-- Shell highlight -->
+          <ellipse cx="90" cy="90" rx="36" ry="28" fill="#2E8B57" opacity="0.7" />
+
+          <!-- Shell scutes (hexagonal plates) -->
+          <g stroke="#145a30" stroke-width="1.2" fill="none" opacity="0.8">
+            <!-- Centre plate -->
+            <polygon points="100,80 114,88 114,104 100,112 86,104 86,88" />
+            <!-- Top left -->
+            <polygon points="80,72 94,80 94,96 80,104 66,96 66,80" />
+            <!-- Top right -->
+            <polygon points="120,72 134,80 134,96 120,104 106,96 106,80" />
+            <!-- Bottom left -->
+            <polygon points="82,102 96,110 96,126 82,134 68,126 68,110" />
+            <!-- Bottom right -->
+            <polygon points="118,102 132,110 132,126 118,134 104,126 104,110" />
+          </g>
+
+          <!-- Shell rim edge -->
+          <ellipse cx="100" cy="105" rx="52" ry="42" fill="none" stroke="#145a30" stroke-width="2" />
+
+          <!-- Head -->
+          <ellipse cx="100" cy="62" rx="18" ry="16" fill="#2E8B57" />
+          <!-- Head highlight -->
+          <ellipse cx="94" cy="57" rx="9" ry="7" fill="#3DAE68" opacity="0.5" />
+          <!-- Eye left -->
+          <circle cx="91" cy="56" r="4" fill="#0A4D6E" />
+          <circle cx="92" cy="55" r="1.5" fill="#fff" />
+          <!-- Eye right -->
+          <circle cx="109" cy="56" r="4" fill="#0A4D6E" />
+          <circle cx="110" cy="55" r="1.5" fill="#fff" />
+          <!-- Smile -->
+          <path d="M93 65 Q100 70 107 65" stroke="#145a30" stroke-width="1.5" fill="none" stroke-linecap="round" />
+          <!-- Nostrils -->
+          <circle cx="97" cy="62" r="1.2" fill="#145a30" />
+          <circle cx="103" cy="62" r="1.2" fill="#145a30" />
+
+          <!-- Front left flipper -->
+          <ellipse cx="57" cy="98" rx="16" ry="8" fill="#2E8B57"
+                   transform="rotate(-35 57 98)" />
+          <!-- Front right flipper -->
+          <ellipse cx="143" cy="98" rx="16" ry="8" fill="#2E8B57"
+                   transform="rotate(35 143 98)" />
+          <!-- Rear left flipper -->
+          <ellipse cx="63" cy="138" rx="13" ry="7" fill="#2E8B57"
+                   transform="rotate(30 63 138)" />
+          <!-- Rear right flipper -->
+          <ellipse cx="137" cy="138" rx="13" ry="7" fill="#2E8B57"
+                   transform="rotate(-30 137 138)" />
+          <!-- Tail -->
+          <ellipse cx="100" cy="148" rx="6" ry="10" fill="#2E8B57" />
+        </svg>
+
+        <!-- Bubbles attached to turtle -->
+        <div class="bubble" style="width:8px;height:8px;left:60px;top:20px;animation-delay:0s;animation-duration:3.5s;"></div>
+        <div class="bubble" style="width:5px;height:5px;left:80px;top:10px;animation-delay:0.8s;animation-duration:4s;"></div>
+        <div class="bubble" style="width:10px;height:10px;left:100px;top:5px;animation-delay:1.6s;animation-duration:3s;"></div>
+        <div class="bubble" style="width:6px;height:6px;left:120px;top:18px;animation-delay:2.4s;animation-duration:4.5s;"></div>
+      </div>
+    </div>
+
+    <!-- Hero text -->
+    <div class="hero-content" style="position:relative;z-index:3;">
+      <span class="hero-eyebrow">Value Investing · Deep Research</span>
+      <h1 class="hero-title">
+        <em>Dive deeper</em><br />
+        into <span class="accent">businesses.</span>
+      </h1>
+      <p class="hero-sub">
+        Conviction-driven research on companies worth understanding — not just owning.
+        Theses, deep dives, and the thinking behind the portfolio.
+      </p>
+      <a href="portfolio.html" class="btn-primary">
+        Explore the Work
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <polyline points="19 12 12 19 5 12"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── Stats Bar ── -->
+  <div class="stats-bar" role="region" aria-label="Quick stats">
+    <div class="stat-item reveal">
+      <span class="stat-num" data-count="12">0</span>
+      <span class="stat-label">Deep Dives Published</span>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <span class="stat-num" data-count="8">0</span>
+      <span class="stat-label">Companies in Portfolio</span>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <span class="stat-num" data-suffix="%+" data-count="18">0</span>
+      <span class="stat-label">Avg. Upside Identified</span>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <span class="stat-num" data-count="3">0</span>
+      <span class="stat-label">Years of Research</span>
+    </div>
+  </div>
+
+  <!-- ── Teaser Quote ── -->
+  <section class="teaser-quote" aria-label="Philosophy">
+    <blockquote class="reveal">
+      <span class="quote-mark">&ldquo;</span>
+      The stock market is a device for transferring money from the impatient
+      to the patient.
+      <span class="quote-mark">&rdquo;</span>
+      <cite>— Warren Buffett</cite>
+    </blockquote>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-logo">Money<span>cronies</span></div>
+    <p class="footer-tagline">Dive Deeper Into Businesses</p>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="portfolio.html#pieces">Pieces</a>
+      <a href="portfolio.html#experience">Experience</a>
+      <a href="portfolio.html#belief">Belief</a>
+      <a href="portfolio.html#library">Library</a>
+      <a href="portfolio.html#about">About Me</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Moneycronies. All opinions are my own.</p>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
