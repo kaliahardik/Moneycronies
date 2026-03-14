@@ -58,58 +58,72 @@ if (divePath && turtleGroup && heroScrollWrapper) {
   let targetDist  = 0;
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  // Ease-in-out quad — smooth entry and exit for panels
+  // Ease-in-out quad — smooth entry and drift for panels
   const eio = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
-  // Each panel slides from its side to centre, lingers, then exits back.
-  // zoneStart = progress when it begins entering; zoneEnd = progress when fully exited.
+  // peakAt = scroll progress when the panel is fully centred.
+  // After peak, panels drift back to their side and STAY visible at
+  // reduced opacity — so all past panels accumulate on left/right,
+  // layering the sense of increasing depth.
   const PANEL_ZONES = [
-    { id: 'depthPanel1', side: 'left',   zoneStart: 0.12, zoneEnd: 0.36 },
-    { id: 'depthPanel2', side: 'right',  zoneStart: 0.36, zoneEnd: 0.58 },
-    { id: 'depthPanel3', side: 'left',   zoneStart: 0.58, zoneEnd: 0.78 },
-    { id: 'depthPanel4', side: 'centre', zoneStart: 0.78, zoneEnd: 0.97 },
+    { id: 'depthPanel1', side: 'left',   peakAt: 0.24 },
+    { id: 'depthPanel2', side: 'right',  peakAt: 0.47 },
+    { id: 'depthPanel3', side: 'left',   peakAt: 0.68 },
+    { id: 'depthPanel4', side: 'centre', peakAt: 0.87 },
   ].map(z => ({ ...z, el: document.getElementById(z.id) }))
    .filter(z => z.el);
 
   /* Animate every panel based on overall scroll progress */
   const updatePanels = (progress) => {
-    // How far off-centre panels sit when hidden (adapts to viewport width)
-    const slideRange = Math.min(window.innerWidth * 0.62, 560);
+    const slideRange  = Math.min(window.innerWidth * 0.52, 460);
+    const restFrac    = 0.65;  // resting X as fraction of slideRange (far to the side)
+    const restOpacity = 0.22;  // opacity of panels that have been passed
+    const restScale   = 0.68;  // scale of resting panels — appear smaller / further away
+    const entryWidth  = 0.12;  // progress range to slide in from side to centre
+    const driftWidth  = 0.11;  // progress range to drift to rest position after peak
 
-    PANEL_ZONES.forEach(({ el, side, zoneStart, zoneEnd }) => {
-      // t: 0 = panel not yet in view, 1 = panel fully past
-      const t = Math.max(0, Math.min(
-        (progress - zoneStart) / (zoneEnd - zoneStart), 1
-      ));
+    PANEL_ZONES.forEach(({ el, side, peakAt }) => {
+      // delta: negative = not reached peak yet, 0 = at peak, positive = past peak
+      const delta = progress - peakAt;
+      const dir   = side === 'left' ? -1 : (side === 'right' ? 1 : 0);
 
-      let xOffset, opacity;
+      let xOffset, opacity, scale;
 
       if (side === 'centre') {
-        // Centre panel just fades up and stays
-        opacity = t < 0.18 ? eio(t / 0.18) : 1;
         xOffset = 0;
+        scale   = 1;
+        opacity = delta < -entryWidth ? 0
+                : delta < 0           ? eio((delta + entryWidth) / entryWidth)
+                :                       1;
+      } else if (delta < -entryWidth) {
+        // Not yet in view — parked off on its side, invisible
+        xOffset = dir * slideRange;
+        opacity = 0;
+        scale   = restScale;
+      } else if (delta < 0) {
+        // Entering: sliding from side to centre, growing to full size
+        const e = eio((delta + entryWidth) / entryWidth);  // 0 → 1
+        xOffset = dir * slideRange * (1 - e);
+        opacity = e;
+        scale   = restScale + (1 - restScale) * e;
+      } else if (delta < driftWidth) {
+        // Drifting: easing from centre back to its side, shrinking
+        const e = eio(delta / driftWidth);  // 0 → 1
+        xOffset = dir * slideRange * restFrac * e;
+        opacity = 1 - (1 - restOpacity) * e;
+        scale   = 1 - (1 - restScale) * e;
       } else {
-        const dir = side === 'left' ? -1 : 1;
-        if (t < 0.25) {
-          // Entering: slide in from side
-          const e  = eio(t / 0.25);
-          xOffset  = dir * slideRange * (1 - e);
-          opacity  = e;
-        } else if (t > 0.75) {
-          // Exiting: slide back to side
-          const e  = eio((t - 0.75) / 0.25);
-          xOffset  = dir * slideRange * e;
-          opacity  = 1 - e;
-        } else {
-          // Centred: fully visible
-          xOffset = 0;
-          opacity = 1;
-        }
+        // At rest: stays visible on its side, smaller and faded
+        xOffset = dir * slideRange * restFrac;
+        opacity = restOpacity;
+        scale   = restScale;
       }
 
-      el.style.transform     = `translateX(calc(-50% + ${xOffset.toFixed(1)}px)) translateY(-50%)`;
+      el.style.transform     = `translateX(calc(-50% + ${xOffset.toFixed(1)}px)) translateY(-50%) scale(${scale.toFixed(3)})`;
       el.style.opacity       = Math.max(0, opacity).toFixed(3);
-      el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      // Active panel renders above resting ones
+      el.style.zIndex        = Math.abs(delta) < driftWidth ? '9' : '7';
+      el.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none';
     });
   };
 
