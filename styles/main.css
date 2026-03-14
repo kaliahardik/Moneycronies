@@ -136,11 +136,11 @@ img { max-width: 100%; display: block; }
   max-width: 680px;
   width: calc(100% - 48px);
   padding: 40px 48px;
-  /* Frosted glass card floating in the ocean */
-  background: rgba(248, 246, 240, 0.58);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  /* Solid card floating in the ocean */
+  background: rgba(248, 246, 240, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.70);
   border-radius: 6px;
   box-shadow: 0 8px 40px rgba(4, 30, 48, 0.25);
   will-change: opacity, transform;
@@ -281,12 +281,18 @@ img { max-width: 100%; display: block; }
   pointer-events: auto;
 }
 
-/* Panel positioning — left / right / centre */
-.dp-left   { left: 3.5%;  top: 28%; }
-.dp-right  { right: 3.5%; top: 44%; }
+/* Panel positioning — horizontal side only */
+.dp-left  { left: 3.5%; }
+.dp-right { right: 3.5%; }
+
+/* Each panel gets its own vertical position so they never overlap */
+#depthPanel1 { top: 10%; }   /* 30 m  — upper-left  */
+#depthPanel2 { top: 28%; }   /* 100 m — mid-right   */
+#depthPanel3 { top: 52%; }   /* 300 m — lower-left  */
+
 .dp-centre {
   left: 50%;
-  top: 73%;
+  top: 70%;
   transform: translateX(-50%) translateY(18px);
   text-align: center;
   border-left: none;
@@ -658,7 +664,8 @@ img { max-width: 100%; display: block; }
   border-radius: var(--radius);
   overflow: hidden;
   transition: transform var(--transition), box-shadow var(--transition);
-  cursor: pointer;
+  /* Turtle cursor on hover over article cards */
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cellipse cx='13' cy='14' rx='8' ry='5' fill='%231A6B3C'/%3E%3Cellipse cx='21' cy='14' rx='3' ry='2.5' fill='%23254f34'/%3E%3Ccircle cx='22' cy='13' r='.9' fill='white' opacity='.7'/%3E%3Cpath d='M12,9 C9,5 5,6 7,9Z' fill='%231c4c2e'/%3E%3Cpath d='M12,19 C9,23 5,22 7,19Z' fill='%231c4c2e'/%3E%3Cpath d='M7,12 C3,11 3,15 6,14Z' fill='%231c4c2e'/%3E%3Cpath d='M7,16 C3,15 3,19 6,18Z' fill='%231c4c2e'/%3E%3C/svg%3E") 14 14, pointer;
 }
 .article-card:hover {
   transform: translateY(-4px);
