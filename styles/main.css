@@ -102,10 +102,10 @@ img { max-width: 100%; display: block; }
    scrolls, driving the turtle along an SVG path.
 ══════════════════════════════════════════════════ */
 
-/* Tall scroll container */
+/* Tall scroll container — 500vh gives room for 4 depth panels */
 .hero-scroll-wrapper {
   position: relative;
-  height: 280vh;
+  height: 500vh;
 }
 
 /* Sticky viewport — ocean lives here */
@@ -247,6 +247,239 @@ img { max-width: 100%; display: block; }
   0%   { transform: translateY(0)    scale(1);   opacity: 0.75; }
   60%  { transform: translateY(-20px) scale(1.1); opacity: 0.4;  }
   100% { transform: translateY(-38px) scale(0.7); opacity: 0;    }
+}
+
+/* ══════════════════════════════════════════════════
+   DEPTH CONTENT PANELS
+   Positioned absolutely inside .hero-sticky.
+   Revealed progressively via JS-added .visible class.
+══════════════════════════════════════════════════ */
+.depth-panel {
+  position: absolute;
+  width: 320px;
+  max-width: calc(50vw - 48px);
+  padding: 28px 30px;
+  /* Dark ocean glass — sophisticated, not playful */
+  background: rgba(2, 18, 34, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 2px;
+  /* Thin left accent stripe */
+  border-left: 2px solid rgba(27, 108, 168, 0.55);
+  color: rgba(255, 255, 255, 0.88);
+  z-index: 8;
+  /* Hidden by default — JS adds .visible */
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.85s ease, transform 0.85s ease;
+  pointer-events: none;
+}
+.depth-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Panel positioning — left / right / centre */
+.dp-left   { left: 3.5%;  top: 28%; }
+.dp-right  { right: 3.5%; top: 44%; }
+.dp-centre {
+  left: 50%;
+  top: 73%;
+  transform: translateX(-50%) translateY(18px);
+  text-align: center;
+  border-left: none;
+  border-top: 2px solid rgba(27, 108, 168, 0.55);
+  width: 380px;
+  max-width: calc(100vw - 48px);
+}
+.dp-centre.visible { transform: translateX(-50%) translateY(0); }
+
+/* Depth tag — e.g. "30 m · The Framework" */
+.dp-depth-tag {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(107, 191, 216, 0.85);
+  margin-bottom: 14px;
+}
+
+/* Panel headings */
+.dp-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 14px;
+}
+
+/* Numbered list (framework) */
+.dp-list {
+  padding-left: 18px;
+  margin-bottom: 14px;
+}
+.dp-list li {
+  font-family: var(--font-read);
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 6px;
+}
+.dp-list li::marker { color: rgba(107, 191, 216, 0.7); }
+
+/* Excerpt paragraph */
+.dp-excerpt {
+  font-family: var(--font-read);
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.68);
+  margin-bottom: 18px;
+}
+
+/* Small note / body text */
+.dp-note {
+  font-family: var(--font-read);
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.60);
+  margin-top: 10px;
+}
+
+/* Quote block inside panel */
+.dp-quote {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  border-left: none;
+  padding: 0;
+  margin-bottom: 14px;
+}
+.dp-quote cite {
+  display: block;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(107, 191, 216, 0.7);
+  margin-top: 8px;
+}
+
+/* Inline text link */
+.dp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(107, 191, 216, 0.9);
+  transition: color 0.2s, gap 0.2s;
+}
+.dp-link:hover { color: white; gap: 10px; }
+
+/* CTA button inside centre panel */
+.dp-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 28px;
+  background: var(--green);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  transition: background 0.25s, transform 0.2s;
+}
+.dp-cta-btn:hover { background: transparent; border-color: var(--green-light); transform: translateY(-2px); }
+
+/* ══════════════════════════════════════════════════
+   DEPTH METER (right edge of hero)
+   A thin vertical gauge that fills as user scrolls.
+══════════════════════════════════════════════════ */
+.depth-meter {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 60vh;
+  z-index: 8;
+  display: flex;
+  align-items: flex-start;
+}
+.dm-track {
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+.dm-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0%;
+  background: linear-gradient(to bottom, rgba(107,191,216,0.8), rgba(27,108,168,0.5));
+  border-radius: 1px;
+  transition: height 0.1s linear;
+}
+.dm-labels {
+  position: absolute;
+  left: 10px;
+  top: 0; bottom: 0;
+  width: 52px;
+}
+.dm-label {
+  position: absolute;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+.dm-dot {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(107, 191, 216, 0.9);
+  transform: translateX(50%) translateY(-50%);
+  box-shadow: 0 0 8px rgba(107, 191, 216, 0.6);
+  transition: top 0.12s linear;
+}
+.dm-depth-readout {
+  position: absolute;
+  right: 30px;
+  top: calc(50% + 14px);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(107, 191, 216, 0.7);
+  white-space: nowrap;
+  transition: top 0.12s linear;
 }
 
 /* ── Stats bar below hero ── */

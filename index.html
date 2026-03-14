@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/main.css?v=3" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -23,12 +23,10 @@
     </ul>
   </nav>
 
-  <!-- ══════════════════════════════════════════════
-       HERO — Scroll-driven ocean dive
-       Wrapper is 280vh tall; inner div is sticky so
-       the ocean scene stays in view while the user
-       scrolls 180vh, driving the turtle along the path.
-  ══════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════
+       HERO — 500vh scroll wrapper; inner sticky div is 100vh.
+       Turtle follows SVG path. Depth panels reveal progressively.
+  ══════════════════════════════════════════════════════════════ -->
   <div class="hero-scroll-wrapper" id="heroScrollWrapper">
     <div class="hero-sticky">
 
@@ -40,264 +38,428 @@
            aria-hidden="true">
         <defs>
 
-          <!-- Ocean depth gradient: pale sky → shallow → mid → deep → abyss -->
+          <!-- Ocean gradient: pale surface → deep abyss -->
           <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#e4f4fb"/>
-            <stop offset="13%"  stop-color="#7ecae0"/>
-            <stop offset="32%"  stop-color="#1B6CA8"/>
-            <stop offset="58%"  stop-color="#0d5585"/>
-            <stop offset="100%" stop-color="#041e30"/>
+            <stop offset="0%"   stop-color="#dff2fb"/>
+            <stop offset="12%"  stop-color="#6bbfd8"/>
+            <stop offset="30%"  stop-color="#1565a8"/>
+            <stop offset="55%"  stop-color="#0b4a7e"/>
+            <stop offset="80%"  stop-color="#062d52"/>
+            <stop offset="100%" stop-color="#021525"/>
           </linearGradient>
 
-          <!-- Crepuscular light rays fade as they go deep -->
+          <!-- Crepuscular rays: bright at surface, fade with depth -->
           <linearGradient id="rayGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.22"/>
-            <stop offset="75%"  stop-color="#ffffff" stop-opacity="0.04"/>
+            <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.20"/>
+            <stop offset="60%"  stop-color="#ffffff" stop-opacity="0.04"/>
             <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
           </linearGradient>
 
-          <!-- Soft caustic shimmer on sea floor -->
-          <radialGradient id="causticGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stop-color="#1B6CA8" stop-opacity="0.25"/>
-            <stop offset="100%" stop-color="#041e30" stop-opacity="0"/>
-          </radialGradient>
-
-          <!-- Drop shadow on the turtle -->
+          <!-- Turtle drop shadow -->
           <filter id="turtleShadow" x="-40%" y="-40%" width="180%" height="180%">
-            <feDropShadow dx="0" dy="3" stdDeviation="7"
-                          flood-color="#041e30" flood-opacity="0.45"/>
+            <feDropShadow dx="0" dy="2" stdDeviation="6"
+                          flood-color="#021525" flood-opacity="0.50"/>
           </filter>
 
-          <!-- Glow for the dive path line -->
-          <filter id="pathGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <!-- Subtle path glow -->
+          <filter id="pathGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
 
         </defs>
 
-        <!-- ═══ BACKGROUND ═══ -->
+        <!-- Background -->
         <rect width="1440" height="900" fill="url(#oceanGrad)"/>
 
-        <!-- Subtle depth bands (horizontal haloclines) -->
-        <rect x="0" y="220" width="1440" height="1.5" fill="white" opacity="0.05"/>
-        <rect x="0" y="390" width="1440" height="1.5" fill="white" opacity="0.04"/>
-        <rect x="0" y="560" width="1440" height="1.5" fill="white" opacity="0.03"/>
-        <rect x="0" y="730" width="1440" height="1.5" fill="white" opacity="0.02"/>
+        <!-- Halocline depth bands -->
+        <rect x="0" y="230" width="1440" height="1" fill="white" opacity="0.05"/>
+        <rect x="0" y="420" width="1440" height="1" fill="white" opacity="0.04"/>
+        <rect x="0" y="600" width="1440" height="1" fill="white" opacity="0.03"/>
+        <rect x="0" y="760" width="1440" height="1" fill="white" opacity="0.02"/>
 
-        <!-- ═══ CREPUSCULAR LIGHT RAYS ═══ -->
-        <polygon points="560,0  620,0  480,820"  fill="url(#rayGrad)" opacity="0.8"/>
-        <polygon points="650,0  730,0  820,880"  fill="url(#rayGrad)" opacity="1"/>
-        <polygon points="760,0  840,0  1080,860" fill="url(#rayGrad)" opacity="0.8"/>
-        <polygon points="870,0  940,0  1260,800" fill="url(#rayGrad)" opacity="0.6"/>
-        <polygon points="480,0  520,0  240,700"  fill="url(#rayGrad)" opacity="0.55"/>
-        <polygon points="380,0  410,0  100,600"  fill="url(#rayGrad)" opacity="0.35"/>
+        <!-- Crepuscular rays -->
+        <polygon points="560,0  618,0  450,880"  fill="url(#rayGrad)" opacity="0.85"/>
+        <polygon points="660,0  740,0  860,900"  fill="url(#rayGrad)" opacity="1"/>
+        <polygon points="770,0  855,0  1120,880" fill="url(#rayGrad)" opacity="0.8"/>
+        <polygon points="880,0  955,0  1320,820" fill="url(#rayGrad)" opacity="0.6"/>
+        <polygon points="465,0  502,0  220,700"  fill="url(#rayGrad)" opacity="0.55"/>
+        <polygon points="360,0  390,0   80,620"  fill="url(#rayGrad)" opacity="0.35"/>
 
-        <!-- ═══ OCEAN SURFACE ═══ -->
-        <!-- Sky above water -->
-        <path d="M0,0 L1440,0 L1440,132
-                 C1350,118 1260,138 1140,126
-                 C1020,114 900,142  780,128
-                 C660,114  540,140  420,126
-                 C300,112  180,138   60,126
-                 C40,124   20,126    0,124 Z"
-              fill="#e4f4fb" opacity="0.22"/>
-
-        <!-- Water surface line (wavy) -->
+        <!-- Water surface wave -->
         <path d="M0,124
-                 C 60,116 120,134 200,126
-                 C 280,118 360,138 460,126
-                 C 560,114 660,140 760,126
-                 C 860,112 960,138 1060,126
-                 C 1160,114 1280,136 1360,126
-                 L1440,124"
-              fill="none" stroke="white" stroke-width="2.5" stroke-opacity="0.6"/>
+                 C 60,114 130,136 220,124
+                 C 310,112 400,138 510,124
+                 C 620,110 730,138 840,124
+                 C 950,110 1060,136 1170,124
+                 C 1280,112 1360,134 1440,124"
+              fill="none" stroke="white" stroke-width="2.2" stroke-opacity="0.55"/>
+        <!-- Sky above surface -->
+        <path d="M0,0 L1440,0 L1440,124
+                 C1360,134 1280,112 1170,124
+                 C1060,136 950,110 840,124
+                 C730,138 620,110 510,124
+                 C400,138 310,112 220,124
+                 C130,136 60,114 0,124 Z"
+              fill="#dff2fb" opacity="0.18"/>
 
-        <!-- Surface foam / sparkle dots -->
-        <circle cx="220"  cy="120" r="2.5" fill="white" opacity="0.8"/>
-        <circle cx="460"  cy="117" r="2"   fill="white" opacity="0.7"/>
-        <circle cx="720"  cy="121" r="3"   fill="white" opacity="0.75"/>
-        <circle cx="950"  cy="118" r="2"   fill="white" opacity="0.65"/>
-        <circle cx="1200" cy="122" r="2.5" fill="white" opacity="0.7"/>
-        <circle cx="350"  cy="123" r="1.5" fill="white" opacity="0.6"/>
-        <circle cx="840"  cy="115" r="1.5" fill="white" opacity="0.55"/>
+        <!-- Surface sparkles -->
+        <circle cx="190"  cy="118" r="2.2" fill="white" opacity="0.8"/>
+        <circle cx="420"  cy="114" r="1.8" fill="white" opacity="0.7"/>
+        <circle cx="680"  cy="119" r="2.6" fill="white" opacity="0.75"/>
+        <circle cx="920"  cy="115" r="1.8" fill="white" opacity="0.65"/>
+        <circle cx="1160" cy="120" r="2.2" fill="white" opacity="0.7"/>
+        <circle cx="320"  cy="122" r="1.4" fill="white" opacity="0.6"/>
+        <circle cx="810"  cy="113" r="1.4" fill="white" opacity="0.55"/>
 
-        <!-- ═══ DIVE PATH (turtle trajectory) ═══ -->
         <!--
-          Path from ocean surface (center) curving right-and-deep,
-          then swinging back left to the seabed — a graceful S-dive.
-          JS reads this path and moves the turtle along it on scroll.
+          TWO INTERTWINING DIVE PATHS
+          Path A (id=divePath): turtle follows this one.
+          Starts left-of-centre, sweeps right into the deep,
+          crosses Path B around mid-ocean, then arcs back left.
+
+          Path B: decorative companion, mirror behaviour.
+          Starts right-of-centre, sweeps left, crosses A,
+          then arcs back right. Together they create a
+          loose, organic double-helix feel.
         -->
+
+        <!-- Path A — turtle's route -->
         <path id="divePath"
-              d="M 720,168
-                 C 1000,215 1060,440 850,558
-                 C 640,676  370,714  618,872"
+              d="M 555,165
+                 C 230,230 180,430 540,545
+                 C 900,660 1140,740 780,872"
               fill="none"
               stroke="white"
-              stroke-width="1.6"
+              stroke-width="1.5"
               stroke-opacity="0.22"
-              stroke-dasharray="9 13"
+              stroke-dasharray="9 15"
               filter="url(#pathGlow)"/>
 
-        <!-- ═══ AMBIENT SCATTERED BUBBLES ═══ -->
-        <g class="ambient-bubbles" opacity="0.5">
-          <!-- left mid-water -->
-          <circle cx="195" cy="360" r="5.5" fill="none" stroke="white" stroke-width="1.2"/>
-          <circle cx="228" cy="318" r="3"   fill="none" stroke="white" stroke-width="1"/>
-          <circle cx="172" cy="295" r="7"   fill="none" stroke="white" stroke-width="1.2"/>
-          <circle cx="215" cy="270" r="2"   fill="none" stroke="white" stroke-width="1"/>
-          <!-- right mid-water -->
-          <circle cx="1110" cy="305" r="4"  fill="none" stroke="white" stroke-width="1.2"/>
-          <circle cx="1148" cy="268" r="6"  fill="none" stroke="white" stroke-width="1"/>
-          <circle cx="1082" cy="245" r="3"  fill="none" stroke="white" stroke-width="1"/>
-          <!-- deep left -->
-          <circle cx="380"  cy="590" r="4"  fill="none" stroke="white" stroke-width="1.1"/>
-          <circle cx="358"  cy="548" r="2.5" fill="none" stroke="white" stroke-width="1"/>
-          <!-- deep right -->
-          <circle cx="1020" cy="520" r="5"  fill="none" stroke="white" stroke-width="1.2"/>
-          <circle cx="1050" cy="478" r="3"  fill="none" stroke="white" stroke-width="1"/>
-          <!-- bottom cluster -->
-          <circle cx="680"  cy="770" r="3.5" fill="none" stroke="white" stroke-width="1.1"/>
-          <circle cx="700"  cy="730" r="2"   fill="none" stroke="white" stroke-width="1"/>
-          <circle cx="656"  cy="748" r="5"   fill="none" stroke="white" stroke-width="1.2"/>
+        <!-- Path B — companion / decorative -->
+        <path id="divePathB"
+              d="M 885,165
+                 C 1210,230 1260,430 900,545
+                 C 540,660 300,740 660,872"
+              fill="none"
+              stroke="white"
+              stroke-width="1.2"
+              stroke-opacity="0.13"
+              stroke-dasharray="6 18"
+              filter="url(#pathGlow)"/>
+
+        <!-- Ambient background bubbles -->
+        <g opacity="0.45">
+          <circle cx="180" cy="340" r="5"   fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="215" cy="295" r="3"   fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="158" cy="272" r="7"   fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="200" cy="250" r="2"   fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="1120" cy="290" r="4"  fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="1158" cy="252" r="6"  fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="1090" cy="232" r="3"  fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="365"  cy="570" r="4"  fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="340"  cy="528" r="2.5" fill="none" stroke="white" stroke-width="0.9"/>
+          <circle cx="1030" cy="500" r="5"  fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="1062" cy="460" r="3"  fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="660"  cy="760" r="3.5" fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="640"  cy="718" r="2"   fill="none" stroke="white" stroke-width="0.9"/>
         </g>
 
-        <!-- ═══ SMALL FISH SILHOUETTES ═══ -->
-        <g fill="white" opacity="0.1">
-          <!-- single fish -->
-          <path d="M290,370 C302,364 318,370 302,376 Z"/>
-          <path d="M278,370 L290,365 L290,375 Z"/>
-          <!-- school of fish (deep right) -->
-          <path d="M1060,490 C1072,484 1088,490 1072,496 Z"/>
-          <path d="M1048,490 L1060,485 L1060,495 Z"/>
-          <path d="M1072,478 C1084,472 1100,478 1084,484 Z"/>
-          <path d="M1060,478 L1072,473 L1072,483 Z"/>
-          <path d="M1080,502 C1092,496 1108,502 1092,508 Z"/>
-          <path d="M1068,502 L1080,497 L1080,507 Z"/>
-          <!-- deep lone fish -->
-          <path d="M320,680 C334,673 354,680 334,687 Z"/>
-          <path d="M306,680 L320,675 L320,685 Z"/>
+        <!-- Fish silhouettes -->
+        <g fill="white" opacity="0.08">
+          <path d="M275,355 C288,348 306,355 288,362 Z"/>
+          <path d="M262,355 L275,350 L275,360 Z"/>
+          <path d="M1055,470 C1068,463 1086,470 1068,477 Z"/>
+          <path d="M1042,470 L1055,465 L1055,475 Z"/>
+          <path d="M1068,456 C1081,449 1099,456 1081,463 Z"/>
+          <path d="M1055,456 L1068,451 L1068,461 Z"/>
+          <path d="M1078,484 C1091,477 1109,484 1091,491 Z"/>
+          <path d="M1065,484 L1078,479 L1078,489 Z"/>
+          <path d="M308,660 C323,652 344,660 323,668 Z"/>
+          <path d="M292,660 L308,654 L308,666 Z"/>
         </g>
 
-        <!-- ═══ SEABED — coral & seaweed silhouettes ═══ -->
-        <g fill="#0A3D5E" opacity="0.45">
-          <!-- Rocks / seabed shelf -->
-          <ellipse cx="200"  cy="897" rx="130" ry="20"/>
-          <ellipse cx="720"  cy="899" rx="180" ry="16"/>
-          <ellipse cx="1240" cy="897" rx="140" ry="18"/>
-          <ellipse cx="500"  cy="900" rx="80"  ry="12"/>
-          <ellipse cx="980"  cy="900" rx="90"  ry="14"/>
-
-          <!-- Left seaweed cluster -->
-          <path d="M 68,900 Q 58,842 72,798 Q 86,754 70,710 Q 54,666 68,900 Z"/>
-          <path d="M 95,900 Q 85,855 100,814 Q115,773  99,732 Q 83,691  95,900 Z"/>
-          <path d="M120,900 Q110,862 126,828 Q142,794 126,760 Q110,726 120,900 Z"/>
-          <!-- Left fan coral -->
-          <path d="M 45,900 Q 25,818  56,755 Q 88,692  68,900 Z" opacity="0.6"/>
-          <path d="M 55,900 L 50,822 Q 38,790  66,778 Q 94,766  78,824 L 72,900 Z"/>
-
-          <!-- Right seaweed cluster -->
-          <path d="M1342,900 Q1332,842 1347,798 Q1362,754 1346,710 Q1330,666 1342,900 Z"/>
-          <path d="M1368,900 Q1358,855 1374,814 Q1390,773 1374,732 Q1358,691 1368,900 Z"/>
-          <path d="M1316,900 Q1306,862 1322,828 Q1338,794 1322,760 Q1306,726 1316,900 Z"/>
-          <!-- Right fan coral -->
-          <path d="M1395,900 Q1418,818 1386,755 Q1354,692 1374,900 Z" opacity="0.6"/>
-
-          <!-- Centre bottom coral -->
-          <path d="M710,900 L706,848 Q695,818 722,808 Q749,798 735,848 L730,900 Z"/>
-          <path d="M730,900 L726,860 Q715,835 738,826 Q761,817 748,858 L744,900 Z"/>
+        <!-- Seabed: rocks, coral, seaweed -->
+        <g fill="#051828" opacity="0.5">
+          <ellipse cx="180"  cy="898" rx="140" ry="18"/>
+          <ellipse cx="720"  cy="900" rx="200" ry="15"/>
+          <ellipse cx="1260" cy="898" rx="150" ry="17"/>
+          <ellipse cx="500"  cy="901" rx="90"  ry="12"/>
+          <ellipse cx="990"  cy="901" rx="100" ry="13"/>
+          <!-- Seaweed left -->
+          <path d="M 65,900 Q 52,838 68,792 Q 84,746 66,702 Q 48,658  65,900 Z"/>
+          <path d="M 90,900 Q 78,852 96,808 Q114,764  96,720 Q 78,676  90,900 Z"/>
+          <path d="M114,900 Q102,858 120,822 Q138,786 120,750 Q102,714 114,900 Z"/>
+          <path d="M 42,900 Q 20,814  54,748 Q 88,682  66,900 Z" opacity="0.6"/>
+          <path d="M 52,900 L 46,818 Q 32,784  62,772 Q 92,760  74,820 L 68,900 Z"/>
+          <!-- Seaweed right -->
+          <path d="M1348,900 Q1336,838 1352,792 Q1368,746 1350,702 Q1332,658 1348,900 Z"/>
+          <path d="M1372,900 Q1360,852 1378,808 Q1396,764 1378,720 Q1360,676 1372,900 Z"/>
+          <path d="M1320,900 Q1308,858 1326,822 Q1344,786 1326,750 Q1308,714 1320,900 Z"/>
+          <path d="M1398,900 Q1420,814 1386,748 Q1352,682 1372,900 Z" opacity="0.6"/>
+          <!-- Centre coral -->
+          <path d="M712,900 L708,844 Q696,812 724,802 Q752,792 736,846 L732,900 Z"/>
+          <path d="M732,900 L728,856 Q716,828 742,818 Q768,808 752,854 L748,900 Z"/>
         </g>
 
-        <!-- ═══ TURTLE (JS will set transform each scroll frame) ═══ -->
+        <!-- ══════════════════════════════════════════════
+             SEA TURTLE — realistic side-view illustration.
+             Head faces RIGHT (+x). Tail extends LEFT (-x).
+             JS sets: transform="translate(x,y) rotate(θ)"
+        ══════════════════════════════════════════════ -->
         <!--
-          Turtle is a side-view swimming turtle facing RIGHT (+x).
-          Head center ≈ (46, 1). Tail extends to (-48, 0).
-          JS applies: transform="translate(px,py) rotate(angleDeg)"
-          where angle 0° = facing right, 90° = facing down, etc.
+          turtleGroup: JS sets translate(x,y) rotate(θ) on this element.
+          Inner <g scale(0.72)> makes the turtle ~28% smaller than the
+          original artwork without touching any path coordinates.
         -->
         <g id="turtleGroup" filter="url(#turtleShadow)">
+         <g transform="scale(0.72)">
 
-          <!-- Trail bubbles (behind turtle, i.e. at negative x) -->
+          <!-- Trail bubbles (behind turtle, at negative-x in local coords) -->
           <g class="trail-bubbles">
-            <circle class="tb" cx="-58" cy="-6"  r="4.5" fill="none" stroke="white" stroke-width="1.5"/>
-            <circle class="tb" cx="-72" cy=" 5"  r="2.8" fill="none" stroke="white" stroke-width="1.1"/>
-            <circle class="tb" cx="-86" cy="-3"  r="6"   fill="none" stroke="white" stroke-width="1.5"/>
-            <circle class="tb" cx="-98" cy=" 4"  r="2"   fill="none" stroke="white" stroke-width="1"/>
+            <circle class="tb" cx="-62" cy="-6"  r="3.8" fill="none" stroke="rgba(255,255,255,0.40)" stroke-width="1.2"/>
+            <circle class="tb" cx="-76" cy=" 6"  r="2.4" fill="none" stroke="rgba(255,255,255,0.30)" stroke-width="1.0"/>
+            <circle class="tb" cx="-90" cy="-3"  r="5.4" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.2"/>
+            <circle class="tb" cx="-104" cy=" 5" r="1.8" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.9"/>
           </g>
 
-          <!-- Shell body -->
-          <ellipse cx="0" cy="0" rx="34" ry="24" fill="#1A6B3C"/>
-          <!-- Shell dome highlight (top-left sheen) -->
-          <ellipse cx="-5" cy="-7" rx="21" ry="14" fill="#2E8B57" opacity="0.55"/>
-          <!-- Shell outer rim -->
-          <ellipse cx="0" cy="0" rx="34" ry="24" fill="none"
-                   stroke="#145a30" stroke-width="1.6"/>
+          <!-- ── CARAPACE (shell) ── -->
+          <!-- Main shell body — elongated, sea-turtle oval -->
+          <path d="M-32,0
+                   C-32,-26  -8,-37  18,-33
+                   C 40,-29  52,-14  52,  0
+                   C 52, 14  40, 29  18, 33
+                   C -8, 37 -32, 26 -32,  0 Z"
+                fill="#173f28"/>
+          <!-- Subtle dorsal ridge highlight -->
+          <path d="M-24,0 C-24,-18 -4,-26 15,-23 C30,-20 38,-9 37,0"
+                fill="#254f34" opacity="0.35"/>
+          <!-- Shell outline — fine engraved stroke -->
+          <path d="M-32,0
+                   C-32,-26  -8,-37  18,-33
+                   C 40,-29  52,-14  52,  0
+                   C 52, 14  40, 29  18, 33
+                   C -8, 37 -32, 26 -32,  0 Z"
+                fill="none" stroke="#0b2a18" stroke-width="1.3"/>
 
-          <!-- Shell scute lines -->
-          <g stroke="#145a30" stroke-width="0.9" fill="none" opacity="0.65">
-            <!-- vertical scute dividers -->
-            <line x1="-10" y1="-23" x2="-10" y2="23"/>
-            <line x1="  8" y1="-24" x2="  8" y2="24"/>
-            <line x1=" 22" y1="-19" x2=" 22" y2="19"/>
-            <!-- curved edge scutes -->
-            <path d="M-30,-9 Q-22,0 -30, 9"/>
-            <path d="M 30,-9 Q 22,0  30, 9"/>
-            <!-- top/bottom cross scutes -->
-            <path d="M-10,-23 Q -1,-26  8,-24"/>
-            <path d="M-10, 23 Q -1, 26  8, 24"/>
-            <path d="M  8,-24 Q 15,-22 22,-19"/>
-            <path d="M  8, 24 Q 15, 22 22, 19"/>
-          </g>
+          <!-- Vertebral scutes — 5 central plates along dorsal ridge -->
+          <!-- Nuchal (cervical) at front -->
+          <path d="M18,-33 L12,-22 L6,-22 L12,-32"
+                fill="#122e1e" opacity="0.6"/>
+          <path d="M18,-33 L12,-22 L6,-22 L12,-32"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
+          <!-- Vertebral I -->
+          <path d="M 6,-22 L12,-22 L14,-10 L 2,-10 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
+          <!-- Vertebral II -->
+          <path d="M 2,-10 L14,-10 L16,  2 L 0,  2 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
+          <!-- Vertebral III -->
+          <path d="M 0,  2 L16,  2 L14, 14 L 2, 14 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
+          <!-- Vertebral IV -->
+          <path d="M 2, 14 L14, 14 L10, 26 L-2, 22 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
 
-          <!-- Neck connecting shell to head -->
-          <path d="M29,-4 Q37,-1 39,1"
-                stroke="#2E8B57" stroke-width="14"
+          <!-- Costal scutes — right (near) side, 4 plates -->
+          <path d="M12,-22 L38,-18 L38, -6 L14,-10 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85"/>
+          <path d="M38, -6 L50,  4 L48, 14 L16,  2 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85" opacity="0.9"/>
+          <path d="M48, 14 L42, 26 L20, 32 L14, 14 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85" opacity="0.75"/>
+
+          <!-- Costal scutes — left (far) side, faded for depth illusion -->
+          <path d="M 6,-22 L-20,-20 L-22, -8 L 2,-10 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.7" opacity="0.45"/>
+          <path d="M-22, -8 L-30,  2 L-28, 12 L 0,  2 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.7" opacity="0.35"/>
+          <path d="M-28, 12 L-22, 24 L 2, 22 L 2, 14 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.7" opacity="0.28"/>
+
+          <!-- ── NECK — short, muscular ── -->
+          <path d="M46,-5 Q54,-2 57, 0" stroke="#254f34" stroke-width="12"
                 fill="none" stroke-linecap="round"/>
+          <path d="M46,-5 Q54,-2 57, 0" stroke="#0b2a18" stroke-width="13"
+                fill="none" stroke-linecap="round" opacity="0.18"/>
 
-          <!-- Head -->
-          <ellipse cx="46" cy="1" rx="14" ry="11" fill="#2E8B57"/>
-          <!-- Head highlight -->
-          <ellipse cx="43" cy="-3" rx="8"  ry="6"  fill="#3DAE68" opacity="0.45"/>
-          <!-- Eye -->
-          <circle cx="52" cy="-3" r="3.8" fill="#0A4D6E"/>
-          <circle cx="52.5" cy="-3.5" r="1.6" fill="white"/>
-          <circle cx="53"   cy="-3"   r="0.7" fill="#030d14"/>
-          <!-- Nostril -->
-          <circle cx="58" cy="1" r="1.2" fill="#145a30"/>
-          <!-- Smile -->
-          <path d="M43,6 Q48,10 53,6"
-                stroke="#145a30" stroke-width="1.2"
-                fill="none" stroke-linecap="round"/>
+          <!-- ── HEAD — tapered, realistic sea-turtle profile ── -->
+          <path d="M57,0
+                   C60,-8  68,-9  74,-6
+                   C80,-3  80, 3  74, 6
+                   C68, 9  60, 7  57, 0 Z"
+                fill="#254f34"/>
+          <!-- Head scale texture (3 lines) -->
+          <path d="M60,-4 C64,-6 69,-6 73,-4"
+                stroke="#0b2a18" stroke-width="0.65" fill="none" opacity="0.65"/>
+          <path d="M59,-1 C63,-3 68,-3 72,-1 C75, 1 76, 2 74, 4"
+                stroke="#0b2a18" stroke-width="0.6"  fill="none" opacity="0.55"/>
+          <path d="M60, 4 C64, 6 69, 5 73, 3"
+                stroke="#0b2a18" stroke-width="0.6"  fill="none" opacity="0.5"/>
+          <!-- Hooked beak tip -->
+          <path d="M78,-1 L82, 1 L78, 4"
+                fill="#0b2a18" opacity="0.55"/>
+          <!-- Eye — small, dark, single specular highlight -->
+          <circle cx="67" cy="-1" r="3.2" fill="#060f09"/>
+          <circle cx="67.8" cy="-1.8" r="1.1" fill="rgba(255,255,255,0.32)"/>
+          <!-- Tympanum (circular ear patch) -->
+          <circle cx="62" cy=" 4" r="2.4"
+                  fill="none" stroke="#0b2a18" stroke-width="0.6" opacity="0.38"/>
+          <!-- Lower jaw line -->
+          <path d="M60, 5 C65, 7 70, 6 76, 4"
+                stroke="#0b2a18" stroke-width="0.7" fill="none" opacity="0.45"/>
 
-          <!-- Tail -->
-          <path d="M-32,0 Q-44,4 -48,2 Q-52,0 -50,-3 Q-46,-5 -42,-2 Q-38,1 -32,0"
-                fill="#2E8B57"/>
+          <!-- ── FRONT FLIPPER — near side (large, wing-like) ── -->
+          <path d="M16,-26
+                   C24,-42  44,-48  60,-40
+                   C70,-34  70,-18  58,-12
+                   C44, -5  22,-12  16,-26 Z"
+                fill="#1c4c2e" opacity="0.94"/>
+          <path d="M16,-26
+                   C24,-42  44,-48  60,-40
+                   C70,-34  70,-18  58,-12
+                   C44, -5  22,-12  16,-26 Z"
+                fill="none" stroke="#0b2a18" stroke-width="1.0"/>
+          <!-- Flipper vein lines (leading edge, internal) -->
+          <path d="M16,-26 C32,-36 52,-34 60,-40"
+                stroke="#0b2a18" stroke-width="0.65" fill="none" opacity="0.45"/>
+          <path d="M18,-22 C34,-30 52,-28 58,-32"
+                stroke="#0b2a18" stroke-width="0.5"  fill="none" opacity="0.35"/>
+          <!-- Single claw at tip -->
+          <path d="M58,-12 L64,-8 L60,-5"
+                fill="#0b2a18" opacity="0.45"/>
 
-          <!-- Front flipper — near side (top) -->
-          <ellipse cx="6"  cy="-30" rx="24" ry="9" fill="#1f7a44"
-                   transform="rotate( 18  6 -30)"/>
-          <ellipse cx="6"  cy="-30" rx="24" ry="9" fill="none"
-                   stroke="#145a30" stroke-width="0.8"
-                   transform="rotate( 18  6 -30)"/>
-          <!-- Front flipper — far side (bottom, slightly smaller) -->
-          <ellipse cx="6"  cy=" 28" rx="20" ry="7" fill="#145a30" opacity="0.75"
-                   transform="rotate(-14  6  28)"/>
+          <!-- Front flipper — far side (slightly smaller, behind body) -->
+          <path d="M14, 24
+                   C22, 40  40, 46  56, 38
+                   C65, 32  65, 16  54, 10
+                   C42,  4  22, 12  14, 24 Z"
+                fill="#122e1e" opacity="0.68"/>
+          <path d="M14, 24
+                   C22, 40  40, 46  56, 38
+                   C65, 32  65, 16  54, 10
+                   C42,  4  22, 12  14, 24 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.85" opacity="0.65"/>
 
-          <!-- Rear flipper — near side (top) -->
-          <ellipse cx="-22" cy="-24" rx="18" ry="7" fill="#1f7a44"
-                   transform="rotate( 28 -22 -24)"/>
-          <ellipse cx="-22" cy="-24" rx="18" ry="7" fill="none"
-                   stroke="#145a30" stroke-width="0.8"
-                   transform="rotate( 28 -22 -24)"/>
-          <!-- Rear flipper — far side (bottom) -->
-          <ellipse cx="-22" cy=" 22" rx="15" ry="6" fill="#145a30" opacity="0.7"
-                   transform="rotate(-22 -22  22)"/>
+          <!-- ── REAR FLIPPER — near side (smaller, rounded) ── -->
+          <path d="M-14,-22
+                   C -4,-36  12,-38  18,-26
+                   C 22,-16  16, -6   0, -4
+                   C-12, -2 -20,-12 -14,-22 Z"
+                fill="#1c4c2e" opacity="0.88"/>
+          <path d="M-14,-22
+                   C -4,-36  12,-38  18,-26
+                   C 22,-16  16, -6   0, -4
+                   C-12, -2 -20,-12 -14,-22 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.95"/>
 
+          <!-- Rear flipper — far side -->
+          <path d="M-16, 20
+                   C -6, 34  10, 36  16, 24
+                   C 20, 14  14,  4  -2,  2
+                   C-14,  0 -22, 10 -16, 20 Z"
+                fill="#122e1e" opacity="0.62"/>
+          <path d="M-16, 20
+                   C -6, 34  10, 36  16, 24
+                   C 20, 14  14,  4  -2,  2
+                   C-14,  0 -22, 10 -16, 20 Z"
+                fill="none" stroke="#0b2a18" stroke-width="0.75" opacity="0.6"/>
+
+          <!-- ── TAIL — short, tapered ── -->
+          <path d="M-32,0 C-40,2 -46,1 -48,-1 C-46,-3 -40,-2 -32,0 Z"
+                fill="#254f34"/>
+
+         </g><!-- /scale(0.72) -->
         </g><!-- /#turtleGroup -->
 
       </svg><!-- /#oceanScene -->
 
-      <!-- ── Hero text overlay (fades out as turtle dives) ── -->
+      <!-- ══════════════════════════════════════════════
+           DEPTH CONTENT PANELS
+           Each panel is positioned absolutely inside the sticky
+           viewport. JS adds .visible when scroll progress passes
+           the data-threshold. Panels alternate left / right.
+      ══════════════════════════════════════════════ -->
+
+      <!-- Panel 1 — The Framework (left, ~28% from top) -->
+      <div class="depth-panel dp-left" id="depthPanel1" data-threshold="0.18">
+        <div class="dp-depth-tag">30 m · The Framework</div>
+        <h3 class="dp-title">Three Questions Before Every Investment</h3>
+        <ol class="dp-list">
+          <li>Does the business possess a structural, durable advantage?</li>
+          <li>Does management allocate capital with discipline and honesty?</li>
+          <li>Am I paying a rational price relative to intrinsic value?</li>
+        </ol>
+        <p class="dp-note">If all three answers are yes, I write the thesis.</p>
+      </div>
+
+      <!-- Panel 2 — Latest Deep Dive (right, ~44% from top) -->
+      <div class="depth-panel dp-right" id="depthPanel2" data-threshold="0.38">
+        <div class="dp-depth-tag">100 m · Latest Work</div>
+        <h3 class="dp-title">Latest Deep Dive</h3>
+        <p class="dp-excerpt">
+          A full-length analysis examining the competitive position,
+          unit economics, and long-term earnings power of a business
+          the market has mispriced.
+        </p>
+        <a href="portfolio.html#pieces" class="dp-link">
+          Read the Analysis
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Panel 3 — Conviction (left, ~60% from top) -->
+      <div class="depth-panel dp-left" id="depthPanel3" data-threshold="0.58">
+        <div class="dp-depth-tag">300 m · Conviction</div>
+        <blockquote class="dp-quote">
+          "The best businesses are the ones that keep getting better."
+          <cite>— Charlie Munger</cite>
+        </blockquote>
+        <p class="dp-note">
+          I look for compounding machines — businesses that reinvest
+          at high returns and widen their moat with every passing year.
+        </p>
+      </div>
+
+      <!-- Panel 4 — CTA (centre, ~76% from top) -->
+      <div class="depth-panel dp-centre" id="depthPanel4" data-threshold="0.76">
+        <div class="dp-depth-tag">500 m · The Full Portfolio</div>
+        <h3 class="dp-title">You've Reached the Bottom.</h3>
+        <p class="dp-note">
+          Every position in my portfolio has a written thesis behind it.
+          Explore the deep dives, the reasoning, and the conviction.
+        </p>
+        <a href="portfolio.html" class="dp-cta-btn">
+          Explore the Work
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- ── Depth meter (right edge) ── -->
+      <div class="depth-meter" id="depthMeter" aria-hidden="true">
+        <div class="dm-track">
+          <div class="dm-fill" id="dmFill"></div>
+        </div>
+        <div class="dm-labels">
+          <span class="dm-label" style="top:10%">Surface</span>
+          <span class="dm-label" style="top:26%">30 m</span>
+          <span class="dm-label" style="top:46%">100 m</span>
+          <span class="dm-label" style="top:65%">300 m</span>
+          <span class="dm-label" style="top:83%">500 m</span>
+        </div>
+        <div class="dm-dot" id="dmDot"></div>
+        <div class="dm-depth-readout" id="dmReadout">0 m</div>
+      </div>
+
+      <!-- ── Hero text (fades out as dive begins) ── -->
       <div class="hero-content" id="heroContent">
         <span class="hero-eyebrow">Value Investing · Deep Research</span>
         <h1 class="hero-title">
@@ -306,8 +468,8 @@
         </h1>
         <p class="hero-sub">
           Conviction-driven research on companies worth understanding —
-          not just owning. Theses, deep dives, and the thinking behind
-          the portfolio.
+          not just owning. Theses, deep dives, and the thinking
+          behind the portfolio.
         </p>
         <a href="portfolio.html" class="btn-primary">
           Explore the Work

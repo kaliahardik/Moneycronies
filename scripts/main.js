@@ -21,40 +21,50 @@ if (nav) {
 }
 
 /* ============================================================
-   2. TURTLE PATH ANIMATION — scroll-driven (Hero page only)
+   2. TURTLE PATH ANIMATION + DEPTH REVEALS (Hero page only)
 
-   The hero wrapper is 280vh tall; the inner sticky div is
-   100vh so the ocean stays fixed while the user scrolls
-   180vh worth.  We map that scroll progress [0→1] to a
-   position along an SVG cubic-bezier path (id="divePath").
-
-   getTotalLength() / getPointAtLength() handle all the math;
-   we just set the turtle <g> transform each frame.
-   Because the turtle lives *inside* the SVG, its coordinates
-   are in SVG-space (1440×900) — no viewport conversion needed.
+   The hero wrapper is 500vh tall; inner sticky div is 100vh.
+   Scroll progress [0→1] over 400vh drives:
+     · turtle position along SVG path (getPointAtLength)
+     · hero text fade-out
+     · depth panel reveal (each has a data-threshold)
+     · depth meter fill + dot position
+     · depth readout label
    ============================================================ */
 const heroScrollWrapper = $('#heroScrollWrapper');
 const divePath          = $('#divePath');
 const turtleGroup       = $('#turtleGroup');
 const heroContent       = $('#heroContent');
 const scrollCueEl       = $('#scrollCue');
+const dmFill            = $('#dmFill');
+const dmDot             = $('#dmDot');
+const dmReadout         = $('#dmReadout');
+
+// Collect depth panels (order matters — threshold ascending)
+const depthPanels = Array.from($$('[id^="depthPanel"]'));
+
+// Depth labels for the readout (map progress → display string)
+const DEPTH_LABELS = [
+  { at: 0,    label: '0 m'   },
+  { at: 0.18, label: '30 m'  },
+  { at: 0.38, label: '100 m' },
+  { at: 0.58, label: '300 m' },
+  { at: 0.76, label: '500 m' },
+];
 
 if (divePath && turtleGroup && heroScrollWrapper) {
 
   const pathLength = divePath.getTotalLength();
 
-  // Smooth-lerp state (avoids jitter on low-res scroll events)
+  // Smooth-lerp state — prevents jitter on coarse scroll events
   let currentDist = 0;
   let targetDist  = 0;
-  let rafId       = null;
-
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  const applyTurtleTransform = (dist) => {
+  /* Place turtle along the path at distance `dist` */
+  const applyTurtle = (dist) => {
     const pt      = divePath.getPointAtLength(dist);
-    // Sample 2px ahead on the path to compute tangent angle
     const ptAhead = divePath.getPointAtLength(Math.min(dist + 2, pathLength));
-    // atan2 returns angle where 0° = right, 90° = down
     const angle   = Math.atan2(ptAhead.y - pt.y, ptAhead.x - pt.x) * (180 / Math.PI);
     turtleGroup.setAttribute(
       'transform',
@@ -62,38 +72,81 @@ if (divePath && turtleGroup && heroScrollWrapper) {
     );
   };
 
+  /* RAF loop — lerps turtle toward target every frame */
   const tick = () => {
     currentDist = lerp(currentDist, targetDist, 0.08);
-    applyTurtleTransform(currentDist);
-    rafId = requestAnimationFrame(tick);
+    applyTurtle(currentDist);
+    requestAnimationFrame(tick);
   };
 
-  const updateTargets = () => {
+  /* Called on every scroll event — updates all driven elements */
+  const updateScene = () => {
     const scrolled  = window.scrollY;
     const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
     const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
 
+    // ── 1. Turtle target distance ──
     targetDist = progress * pathLength;
 
-    // ── Hero text: fade + slide up as turtle dives ──
+    // ── 2. Hero text: fade + rise as dive begins ──
     if (heroContent) {
-      // Fully visible at progress=0, fully gone by progress=0.32
-      const textOpacity = Math.max(0, 1 - progress / 0.32);
-      const textSlide   = progress * -50; // px, slides upward
-      heroContent.style.opacity   = textOpacity;
-      heroContent.style.transform =
-        `translate(-50%, calc(-50% + ${textSlide}px))`;
+      const op    = Math.max(0, 1 - progress / 0.28);
+      const slide = progress * -44;
+      heroContent.style.opacity   = op;
+      heroContent.style.transform = `translate(-50%, calc(-50% + ${slide}px))`;
     }
 
-    // ── Scroll cue: disappears quickly ──
+    // ── 3. Scroll cue: vanishes early ──
     if (scrollCueEl) {
-      scrollCueEl.style.opacity = Math.max(0, 1 - progress / 0.1);
+      scrollCueEl.style.opacity = Math.max(0, 1 - progress / 0.08);
+    }
+
+    // ── 4. Depth panels: fade in at their threshold ──
+    depthPanels.forEach(panel => {
+      const threshold = parseFloat(panel.dataset.threshold || 0);
+      if (progress >= threshold) {
+        panel.classList.add('visible');
+      }
+    });
+
+    // ── 5. Depth meter: fill + dot + readout ──
+    if (dmFill) {
+      dmFill.style.height = `${(progress * 100).toFixed(1)}%`;
+    }
+    // Depth meter track covers top:50%±30vh of viewport — map progress to that
+    const meterTopPct   = 50 - 30;    // track top = 20% of vh
+    const meterHeightPct = 60;        // track height = 60vh
+    const dotTopPct = meterTopPct + progress * meterHeightPct;
+    if (dmDot) {
+      dmDot.style.top = `${dotTopPct}%`;
+    }
+    if (dmReadout) {
+      dmReadout.style.top = `${dotTopPct + 2}%`;
+      // Pick the closest depth label
+      let label = DEPTH_LABELS[0].label;
+      for (const d of DEPTH_LABELS) {
+        if (progress >= d.at) label = d.label;
+      }
+      dmReadout.textContent = label;
     }
   };
 
-  window.addEventListener('scroll', updateTargets, { passive: true });
-  updateTargets(); // set initial position
-  tick();          // start animation loop
+  window.addEventListener('scroll', updateScene, { passive: true });
+  updateScene(); // initialise on load
+  tick();        // start animation loop
+}
+
+/* ============================================================
+   8. DEPTH TINT — gradually darken the ocean as turtle dives
+   ============================================================ */
+const oceanSceneEl2 = $('#oceanScene');
+if (oceanSceneEl2 && heroScrollWrapper) {
+  window.addEventListener('scroll', () => {
+    const scrolled  = window.scrollY;
+    const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
+    const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
+    oceanSceneEl2.style.setProperty('--depth-progress', progress.toFixed(3));
+  }, { passive: true });
 }
 
 /* ============================================================
@@ -191,18 +244,3 @@ $$('.article-card').forEach(card => {
   });
 });
 
-/* ============================================================
-   8. DEPTH TINT — darken the sticky ocean as turtle dives
-      Drives a CSS custom property --depth-tint on the SVG
-      so the background gradually shifts toward the abyss.
-   ============================================================ */
-const oceanSceneEl = $('#oceanScene');
-if (oceanSceneEl && heroScrollWrapper) {
-  window.addEventListener('scroll', () => {
-    const scrolled  = window.scrollY;
-    const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
-    const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
-    // Overlay a semi-transparent dark rect by raising its opacity
-    oceanSceneEl.style.setProperty('--depth-progress', progress.toFixed(3));
-  }, { passive: true });
-}
