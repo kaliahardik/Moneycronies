@@ -76,24 +76,40 @@ img { max-width: 100%; display: block; }
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-sm);
 }
+
+/* Logo — white + soft glow over ocean, brand colours once scrolled */
 .nav-logo {
   font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--green);
+  color: #ffffff;
   letter-spacing: 0.02em;
+  text-shadow: 0 1px 12px rgba(0, 15, 40, 0.55);
+  transition: color var(--transition), text-shadow var(--transition);
 }
-.nav-logo span { color: var(--blue-deep); }
+.nav-logo span {
+  color: rgba(185, 230, 255, 0.92);
+  transition: color var(--transition);
+}
+.site-nav.scrolled .nav-logo {
+  color: var(--green);
+  text-shadow: none;
+}
+.site-nav.scrolled .nav-logo span { color: var(--blue-deep); }
+
+/* Nav links — white over ocean, ink when scrolled */
 .nav-links { display: flex; gap: 28px; list-style: none; }
 .nav-links a {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--ink-light);
+  color: rgba(255, 255, 255, 0.82);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: color var(--transition);
 }
-.nav-links a:hover { color: var(--green); }
+.nav-links a:hover { color: #ffffff; }
+.site-nav.scrolled .nav-links a { color: var(--ink-light); }
+.site-nav.scrolled .nav-links a:hover { color: var(--green); }
 
 /* ══════════════════════════════════════════════════
    HERO — Scroll-driven ocean dive
@@ -126,13 +142,14 @@ img { max-width: 100%; display: block; }
   z-index: 6;          /* above ocean SVG, below depth panels (z-index 7+) */
   pointer-events: none;
 }
-/* Top vignette — blends with the fixed nav area */
+/* Top vignette — subtle dark scrim behind the transparent nav.
+   Increases contrast for the white logo without looking heavy. */
 .hero-sticky::before {
   top: 0;
-  height: 72px;
+  height: 90px;
   background: linear-gradient(
     to bottom,
-    rgba(248, 246, 240, 0.35) 0%,
+    rgba(0, 10, 25, 0.42) 0%,
     transparent 100%
   );
 }
