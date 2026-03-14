@@ -116,6 +116,40 @@ img { max-width: 100%; display: block; }
   overflow: hidden;
 }
 
+/* Smooth gradient vignettes — top and bottom of the ocean */
+.hero-sticky::before,
+.hero-sticky::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 6;          /* above ocean SVG, below depth panels (z-index 7+) */
+  pointer-events: none;
+}
+/* Top vignette — blends with the fixed nav area */
+.hero-sticky::before {
+  top: 0;
+  height: 72px;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 246, 240, 0.35) 0%,
+    transparent 100%
+  );
+}
+/* Bottom vignette — fades dark ocean into cream before the stats bar */
+.hero-sticky::after {
+  bottom: 0;
+  height: 20vh;
+  background: linear-gradient(
+    to bottom,
+    transparent           0%,
+    rgba(248,246,240,0.30) 35%,
+    rgba(248,246,240,0.72) 62%,
+    rgba(248,246,240,0.94) 82%,
+    var(--cream)          100%
+  );
+}
+
 /* Full-bleed ocean SVG */
 .ocean-scene {
   position: absolute;
@@ -478,8 +512,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   justify-content: center;
   gap: 0;
-  background: var(--white);
-  border-top: 1px solid var(--border);
+  background: var(--cream);   /* matches hero bottom vignette */
   border-bottom: 1px solid var(--border);
   overflow: hidden;
 }
