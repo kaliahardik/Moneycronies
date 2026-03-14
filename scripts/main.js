@@ -21,13 +21,13 @@ if (nav) {
 }
 
 /* ============================================================
-   2. TURTLE PATH ANIMATION + DEPTH REVEALS (Hero page only)
+   2. FISH PATH ANIMATION + CINEMATIC DEPTH PANELS (Hero page only)
 
    The hero wrapper is 500vh tall; inner sticky div is 100vh.
    Scroll progress [0→1] over 400vh drives:
-     · turtle position along SVG path (getPointAtLength)
+     · fish position along SVG path (getPointAtLength)
      · hero text fade-out
-     · depth panel reveal (each has a data-threshold)
+     · depth panels slide from side → centre → side (one at a time)
      · depth meter fill + dot position
      · depth readout label
    ============================================================ */
@@ -39,9 +39,6 @@ const scrollCueEl       = $('#scrollCue');
 const dmFill            = $('#dmFill');
 const dmDot             = $('#dmDot');
 const dmReadout         = $('#dmReadout');
-
-// Collect depth panels (order matters — threshold ascending)
-const depthPanels = Array.from($$('[id^="depthPanel"]'));
 
 // Depth labels for the readout (map progress → display string)
 const DEPTH_LABELS = [
@@ -61,7 +58,62 @@ if (divePath && turtleGroup && heroScrollWrapper) {
   let targetDist  = 0;
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  /* Place turtle along the path at distance `dist` */
+  // Ease-in-out quad — smooth entry and exit for panels
+  const eio = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+  // Each panel slides from its side to centre, lingers, then exits back.
+  // zoneStart = progress when it begins entering; zoneEnd = progress when fully exited.
+  const PANEL_ZONES = [
+    { id: 'depthPanel1', side: 'left',   zoneStart: 0.12, zoneEnd: 0.36 },
+    { id: 'depthPanel2', side: 'right',  zoneStart: 0.36, zoneEnd: 0.58 },
+    { id: 'depthPanel3', side: 'left',   zoneStart: 0.58, zoneEnd: 0.78 },
+    { id: 'depthPanel4', side: 'centre', zoneStart: 0.78, zoneEnd: 0.97 },
+  ].map(z => ({ ...z, el: document.getElementById(z.id) }))
+   .filter(z => z.el);
+
+  /* Animate every panel based on overall scroll progress */
+  const updatePanels = (progress) => {
+    // How far off-centre panels sit when hidden (adapts to viewport width)
+    const slideRange = Math.min(window.innerWidth * 0.62, 560);
+
+    PANEL_ZONES.forEach(({ el, side, zoneStart, zoneEnd }) => {
+      // t: 0 = panel not yet in view, 1 = panel fully past
+      const t = Math.max(0, Math.min(
+        (progress - zoneStart) / (zoneEnd - zoneStart), 1
+      ));
+
+      let xOffset, opacity;
+
+      if (side === 'centre') {
+        // Centre panel just fades up and stays
+        opacity = t < 0.18 ? eio(t / 0.18) : 1;
+        xOffset = 0;
+      } else {
+        const dir = side === 'left' ? -1 : 1;
+        if (t < 0.25) {
+          // Entering: slide in from side
+          const e  = eio(t / 0.25);
+          xOffset  = dir * slideRange * (1 - e);
+          opacity  = e;
+        } else if (t > 0.75) {
+          // Exiting: slide back to side
+          const e  = eio((t - 0.75) / 0.25);
+          xOffset  = dir * slideRange * e;
+          opacity  = 1 - e;
+        } else {
+          // Centred: fully visible
+          xOffset = 0;
+          opacity = 1;
+        }
+      }
+
+      el.style.transform     = `translateX(calc(-50% + ${xOffset.toFixed(1)}px)) translateY(-50%)`;
+      el.style.opacity       = Math.max(0, opacity).toFixed(3);
+      el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+    });
+  };
+
+  /* Place fish along the path at distance `dist` */
   const applyTurtle = (dist) => {
     const pt      = divePath.getPointAtLength(dist);
     const ptAhead = divePath.getPointAtLength(Math.min(dist + 2, pathLength));
@@ -72,7 +124,7 @@ if (divePath && turtleGroup && heroScrollWrapper) {
     );
   };
 
-  /* RAF loop — lerps turtle toward target every frame */
+  /* RAF loop — lerps fish toward target every frame */
   const tick = () => {
     currentDist = lerp(currentDist, targetDist, 0.08);
     applyTurtle(currentDist);
@@ -85,7 +137,7 @@ if (divePath && turtleGroup && heroScrollWrapper) {
     const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
     const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
 
-    // ── 1. Turtle target distance ──
+    // ── 1. Fish target distance ──
     targetDist = progress * pathLength;
 
     // ── 2. Hero text: fade + rise as dive begins ──
@@ -101,28 +153,21 @@ if (divePath && turtleGroup && heroScrollWrapper) {
       scrollCueEl.style.opacity = Math.max(0, 1 - progress / 0.08);
     }
 
-    // ── 4. Depth panels: fade in at their threshold ──
-    depthPanels.forEach(panel => {
-      const threshold = parseFloat(panel.dataset.threshold || 0);
-      if (progress >= threshold) {
-        panel.classList.add('visible');
-      }
-    });
+    // ── 4. Depth panels: cinematic slide to centre and back ──
+    updatePanels(progress);
 
     // ── 5. Depth meter: fill + dot + readout ──
     if (dmFill) {
       dmFill.style.height = `${(progress * 100).toFixed(1)}%`;
     }
-    // Depth meter track covers top:50%±30vh of viewport — map progress to that
-    const meterTopPct   = 50 - 30;    // track top = 20% of vh
-    const meterHeightPct = 60;        // track height = 60vh
+    const meterTopPct    = 50 - 30;
+    const meterHeightPct = 60;
     const dotTopPct = meterTopPct + progress * meterHeightPct;
     if (dmDot) {
       dmDot.style.top = `${dotTopPct}%`;
     }
     if (dmReadout) {
       dmReadout.style.top = `${dotTopPct + 2}%`;
-      // Pick the closest depth label
       let label = DEPTH_LABELS[0].label;
       for (const d of DEPTH_LABELS) {
         if (progress >= d.at) label = d.label;

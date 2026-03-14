@@ -256,51 +256,36 @@ img { max-width: 100%; display: block; }
 ══════════════════════════════════════════════════ */
 .depth-panel {
   position: absolute;
-  width: 320px;
-  max-width: calc(50vw - 48px);
+  /* Horizontally centred — JS applies translateX offset to slide in/out */
+  left: 50%;
+  top: 52%;
+  width: 360px;
+  max-width: calc(100vw - 64px);
   padding: 28px 30px;
-  /* Dark ocean glass — sophisticated, not playful */
-  background: rgba(2, 18, 34, 0.72);
+  /* Dark ocean glass */
+  background: rgba(2, 18, 34, 0.78);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 2px;
-  /* Thin left accent stripe */
   border-left: 2px solid rgba(27, 108, 168, 0.55);
   color: rgba(255, 255, 255, 0.88);
   z-index: 8;
-  /* Hidden by default — JS adds .visible */
+  /* JS drives opacity and transform — no CSS transition */
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.85s ease, transform 0.85s ease;
+  transform: translateX(-50%) translateY(-50%);
   pointer-events: none;
-}
-.depth-panel.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  will-change: transform, opacity;
 }
 
-/* Panel positioning — horizontal side only */
-.dp-left  { left: 3.5%; }
-.dp-right { right: 3.5%; }
-
-/* Each panel gets its own vertical position so they never overlap */
-#depthPanel1 { top: 10%; }   /* 30 m  — upper-left  */
-#depthPanel2 { top: 28%; }   /* 100 m — mid-right   */
-#depthPanel3 { top: 52%; }   /* 300 m — lower-left  */
-
+/* Centre panel — top border instead of left */
 .dp-centre {
-  left: 50%;
-  top: 70%;
-  transform: translateX(-50%) translateY(18px);
-  text-align: center;
   border-left: none;
   border-top: 2px solid rgba(27, 108, 168, 0.55);
-  width: 380px;
+  text-align: center;
+  width: 400px;
   max-width: calc(100vw - 48px);
 }
-.dp-centre.visible { transform: translateX(-50%) translateY(0); }
 
 /* Depth tag — e.g. "30 m · The Framework" */
 .dp-depth-tag {

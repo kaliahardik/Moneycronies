@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=4" />
+  <link rel="stylesheet" href="styles/main.css?v=5" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -124,28 +124,38 @@
           loose, organic double-helix feel.
         -->
 
-        <!-- Path A — turtle's route -->
+        <!--
+          TWO ASYMMETRIC DIVE PATHS
+          Both sweep hard left and hard right — even beyond the viewport edges —
+          creating a wide, organic, non-mirrored double-helix feel.
+          Path A: fish follows this. Starts left-of-centre, lunges far LEFT,
+                  crosses to far RIGHT, settles centre-bottom.
+          Path B: decorative. Starts right-of-centre, lunges far RIGHT,
+                  crosses to far LEFT, settles slightly offset from A.
+        -->
+
+        <!-- Path A — fish route -->
         <path id="divePath"
-              d="M 555,165
-                 C 230,230 180,430 540,545
-                 C 900,660 1140,740 780,872"
+              d="M 560,158
+                 C -60,270 -80,480 500,575
+                 C 1080,670 1540,755 790,875"
               fill="none"
               stroke="white"
               stroke-width="1.5"
-              stroke-opacity="0.22"
-              stroke-dasharray="9 15"
+              stroke-opacity="0.24"
+              stroke-dasharray="9 16"
               filter="url(#pathGlow)"/>
 
-        <!-- Path B — companion / decorative -->
+        <!-- Path B — companion (different amplitude, different phase) -->
         <path id="divePathB"
-              d="M 885,165
-                 C 1210,230 1260,430 900,545
-                 C 540,660 300,740 660,872"
+              d="M 920,162
+                 C 1600,260 1640,490 980,572
+                 C 320,654 -100,748 650,878"
               fill="none"
               stroke="white"
               stroke-width="1.2"
               stroke-opacity="0.13"
-              stroke-dasharray="6 18"
+              stroke-dasharray="5 20"
               filter="url(#pathGlow)"/>
 
         <!-- Ambient background bubbles -->
