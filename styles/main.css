@@ -290,19 +290,19 @@ img { max-width: 100%; display: block; }
 ══════════════════════════════════════════════════ */
 .depth-panel {
   position: absolute;
-  /* Horizontally centred — JS applies translateX offset to slide in/out */
+  /* Horizontally centred — JS applies translateX/Y offset to slide in/out */
   left: 50%;
   top: 52%;
-  width: 360px;
-  max-width: calc(100vw - 64px);
-  padding: 28px 30px;
+  width: 490px;
+  max-width: calc(100vw - 48px);
+  padding: 32px 38px;
   /* Dark ocean glass */
-  background: rgba(2, 18, 34, 0.78);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(2, 18, 34, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 2px;
-  border-left: 2px solid rgba(27, 108, 168, 0.55);
+  border-left: 2px solid rgba(27, 108, 168, 0.60);
   color: rgba(255, 255, 255, 0.88);
   z-index: 8;
   /* JS drives opacity and transform — no CSS transition */
@@ -315,10 +315,10 @@ img { max-width: 100%; display: block; }
 /* Centre panel — top border instead of left */
 .dp-centre {
   border-left: none;
-  border-top: 2px solid rgba(27, 108, 168, 0.55);
+  border-top: 2px solid rgba(27, 108, 168, 0.60);
   text-align: center;
-  width: 400px;
-  max-width: calc(100vw - 48px);
+  width: 530px;
+  max-width: calc(100vw - 40px);
 }
 
 /* Depth tag — e.g. "30 m · The Framework" */
@@ -335,58 +335,58 @@ img { max-width: 100%; display: block; }
 /* Panel headings */
 .dp-title {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: 1.18rem;
   font-weight: 600;
   line-height: 1.35;
   color: rgba(255, 255, 255, 0.95);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 /* Numbered list (framework) */
 .dp-list {
-  padding-left: 18px;
-  margin-bottom: 14px;
+  padding-left: 20px;
+  margin-bottom: 16px;
 }
 .dp-list li {
   font-family: var(--font-read);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 300;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.72);
-  margin-bottom: 6px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 8px;
 }
 .dp-list li::marker { color: rgba(107, 191, 216, 0.7); }
 
 /* Excerpt paragraph */
 .dp-excerpt {
   font-family: var(--font-read);
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 300;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.68);
-  margin-bottom: 18px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.70);
+  margin-bottom: 20px;
 }
 
 /* Small note / body text */
 .dp-note {
   font-family: var(--font-read);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 300;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.60);
-  margin-top: 10px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.62);
+  margin-top: 12px;
 }
 
 /* Quote block inside panel */
 .dp-quote {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-style: italic;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.90);
   border-left: none;
   padding: 0;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .dp-quote cite {
   display: block;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=7" />
+  <link rel="stylesheet" href="styles/main.css?v=8" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -25,7 +25,7 @@
 
   <!-- ══════════════════════════════════════════════════════════
        HERO — 500vh scroll wrapper; inner sticky div is 100vh.
-       Turtle follows SVG path. Depth panels reveal progressively.
+       Fish follows SVG path. Depth panels reveal progressively.
   ══════════════════════════════════════════════════════════════ -->
   <div class="hero-scroll-wrapper" id="heroScrollWrapper">
     <div class="hero-sticky">
@@ -55,7 +55,7 @@
             <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
           </linearGradient>
 
-          <!-- Turtle drop shadow -->
+          <!-- Fish drop shadow -->
           <filter id="turtleShadow" x="-40%" y="-40%" width="180%" height="180%">
             <feDropShadow dx="0" dy="2" stdDeviation="6"
                           flood-color="#021525" flood-opacity="0.50"/>
@@ -112,53 +112,7 @@
         <circle cx="320"  cy="122" r="1.4" fill="white" opacity="0.6"/>
         <circle cx="810"  cy="113" r="1.4" fill="white" opacity="0.55"/>
 
-        <!--
-          TWO INTERTWINING DIVE PATHS
-          Path A (id=divePath): turtle follows this one.
-          Starts left-of-centre, sweeps right into the deep,
-          crosses Path B around mid-ocean, then arcs back left.
-
-          Path B: decorative companion, mirror behaviour.
-          Starts right-of-centre, sweeps left, crosses A,
-          then arcs back right. Together they create a
-          loose, organic double-helix feel.
-        -->
-
-        <!--
-          TWO ASYMMETRIC DIVE PATHS
-          Both sweep hard left and hard right — even beyond the viewport edges —
-          creating a wide, organic, non-mirrored double-helix feel.
-          Path A: fish follows this. Starts left-of-centre, lunges far LEFT,
-                  crosses to far RIGHT, settles centre-bottom.
-          Path B: decorative. Starts right-of-centre, lunges far RIGHT,
-                  crosses to far LEFT, settles slightly offset from A.
-        -->
-
-        <!-- Path A — fish route -->
-        <path id="divePath"
-              d="M 560,158
-                 C -60,270 -80,480 500,575
-                 C 1080,670 1540,755 790,875"
-              fill="none"
-              stroke="white"
-              stroke-width="1.5"
-              stroke-opacity="0.24"
-              stroke-dasharray="9 16"
-              filter="url(#pathGlow)"/>
-
-        <!-- Path B — companion (different amplitude, different phase) -->
-        <path id="divePathB"
-              d="M 920,162
-                 C 1600,260 1640,490 980,572
-                 C 320,654 -100,748 650,878"
-              fill="none"
-              stroke="white"
-              stroke-width="1.2"
-              stroke-opacity="0.13"
-              stroke-dasharray="5 20"
-              filter="url(#pathGlow)"/>
-
-        <!-- Ambient background bubbles -->
+        <!-- Ambient background bubbles (fixed — do not move with path group) -->
         <g opacity="0.45">
           <circle cx="180" cy="340" r="5"   fill="none" stroke="white" stroke-width="1.1"/>
           <circle cx="215" cy="295" r="3"   fill="none" stroke="white" stroke-width="1"/>
@@ -175,7 +129,7 @@
           <circle cx="640"  cy="718" r="2"   fill="none" stroke="white" stroke-width="0.9"/>
         </g>
 
-        <!-- Fish silhouettes -->
+        <!-- Decorative background fish silhouettes (fixed) -->
         <g fill="white" opacity="0.08">
           <path d="M275,355 C288,348 306,355 288,362 Z"/>
           <path d="M262,355 L275,350 L275,360 Z"/>
@@ -189,7 +143,7 @@
           <path d="M292,660 L308,654 L308,666 Z"/>
         </g>
 
-        <!-- Seabed: rocks, coral, seaweed -->
+        <!-- Seabed: rocks, coral, seaweed (fixed) -->
         <g fill="#051828" opacity="0.5">
           <ellipse cx="180"  cy="898" rx="140" ry="18"/>
           <ellipse cx="720"  cy="900" rx="200" ry="15"/>
@@ -213,67 +167,107 @@
         </g>
 
         <!-- ══════════════════════════════════════════════
-             SEA TURTLE — realistic side-view illustration.
-             Head faces RIGHT (+x). Tail extends LEFT (-x).
-             JS sets: transform="translate(x,y) rotate(θ)"
+             PATH GROUP — dive paths + animated fish.
+             JS applies translate(0, -Y) to this group as
+             scroll progresses, creating the parallax effect
+             of rising upward as you descend deeper.
+             Fish (turtleGroup) lives here too so it stays
+             visually on the path at all scroll positions.
         ══════════════════════════════════════════════ -->
-        <!--
-          diveMarker: a small fish silhouette — faces right (+x).
-          JS sets translate(x,y) rotate(θ) so it follows the path
-          and tilts naturally as it dives deeper.
-        -->
-        <g id="turtleGroup" filter="url(#turtleShadow)">
+        <g id="pathGroup">
 
-          <!-- Tail fin — forked, behind the body -->
-          <path d="M-20,-9 L-28,0 L-20,9 Z"
-                fill="rgba(107,191,216,0.60)"/>
+          <!--
+            TWO ASYMMETRIC DIVE PATHS
+            Path A: fish follows this. Starts left-of-centre, lunges far LEFT,
+                    crosses to far RIGHT, settles centre-bottom.
+            Path B: decorative companion. Starts right-of-centre, lunges far RIGHT,
+                    crosses to far LEFT, settles slightly offset from A.
+          -->
 
-          <!-- Main body — streamlined oval -->
-          <ellipse cx="-2" cy="0" rx="17" ry="9"
-                   fill="rgba(107,191,216,0.82)"/>
+          <!-- Path A — fish route -->
+          <path id="divePath"
+                d="M 560,158
+                   C -60,270 -80,480 500,575
+                   C 1080,670 1540,755 790,875"
+                fill="none"
+                stroke="white"
+                stroke-width="1.5"
+                stroke-opacity="0.24"
+                stroke-dasharray="9 16"
+                filter="url(#pathGlow)"/>
 
-          <!-- Dorsal fin -->
-          <path d="M-6,-9 C-2,-18 7,-14 6,-9 Z"
-                fill="rgba(107,191,216,0.52)"/>
+          <!-- Path B — companion (different amplitude, different phase) -->
+          <path id="divePathB"
+                d="M 920,162
+                   C 1600,260 1640,490 980,572
+                   C 320,654 -100,748 650,878"
+                fill="none"
+                stroke="white"
+                stroke-width="1.2"
+                stroke-opacity="0.13"
+                stroke-dasharray="5 20"
+                filter="url(#pathGlow)"/>
 
-          <!-- Pectoral fin (near side) -->
-          <path d="M0,-5 C5,-12 12,-9 10,-4 Z"
-                fill="rgba(255,255,255,0.20)"/>
+          <!-- ══════════════════════════════════════════════
+               ANIMATED FISH — faces right (+x), tail at left.
+               JS sets: transform="translate(x,y) rotate(θ)"
+               Position is in pathGroup's local SVG coordinates.
+          ══════════════════════════════════════════════ -->
+          <g id="turtleGroup" filter="url(#turtleShadow)">
 
-          <!-- Lateral line — subtle stripe -->
-          <path d="M-14,0 C-6,-3 4,-3 12,0"
-                stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none"/>
+            <!-- Tail fin — forked, behind the body -->
+            <path d="M-20,-9 L-28,0 L-20,9 Z"
+                  fill="rgba(107,191,216,0.60)"/>
 
-          <!-- Belly highlight -->
-          <path d="M-10,5 C-2,8 6,7 12,3"
-                stroke="rgba(255,255,255,0.14)" stroke-width="1.5" fill="none"/>
+            <!-- Main body — streamlined oval -->
+            <ellipse cx="-2" cy="0" rx="17" ry="9"
+                     fill="rgba(107,191,216,0.82)"/>
 
-          <!-- Eye — dark with specular dot -->
-          <circle cx="10" cy="-2" r="3.2" fill="rgba(4,28,48,0.88)"/>
-          <circle cx="11" cy="-3" r="1.1" fill="rgba(255,255,255,0.72)"/>
+            <!-- Dorsal fin -->
+            <path d="M-6,-9 C-2,-18 7,-14 6,-9 Z"
+                  fill="rgba(107,191,216,0.52)"/>
 
-          <!-- Trail bubbles (at negative-x, behind the fish) -->
-          <circle class="tb" cx="-36" cy="-5" r="2.2"
-                  fill="none" stroke="rgba(255,255,255,0.38)" stroke-width="1.0"/>
-          <circle class="tb" cx="-48" cy=" 4" r="1.6"
-                  fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="0.9"/>
-          <circle class="tb" cx="-58" cy="-2" r="3.0"
-                  fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.1"/>
-          <circle class="tb" cx="-68" cy=" 5" r="1.4"
-                  fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+            <!-- Pectoral fin (near side) -->
+            <path d="M0,-5 C5,-12 12,-9 10,-4 Z"
+                  fill="rgba(255,255,255,0.20)"/>
 
-        </g><!-- /#turtleGroup -->
+            <!-- Lateral line — subtle stripe -->
+            <path d="M-14,0 C-6,-3 4,-3 12,0"
+                  stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none"/>
+
+            <!-- Belly highlight -->
+            <path d="M-10,5 C-2,8 6,7 12,3"
+                  stroke="rgba(255,255,255,0.14)" stroke-width="1.5" fill="none"/>
+
+            <!-- Eye — dark with specular dot -->
+            <circle cx="10" cy="-2" r="3.2" fill="rgba(4,28,48,0.88)"/>
+            <circle cx="11" cy="-3" r="1.1" fill="rgba(255,255,255,0.72)"/>
+
+            <!-- Trail bubbles (at negative-x, behind the fish) -->
+            <circle class="tb" cx="-36" cy="-5" r="2.2"
+                    fill="none" stroke="rgba(255,255,255,0.38)" stroke-width="1.0"/>
+            <circle class="tb" cx="-48" cy=" 4" r="1.6"
+                    fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="0.9"/>
+            <circle class="tb" cx="-58" cy="-2" r="3.0"
+                    fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1.1"/>
+            <circle class="tb" cx="-68" cy=" 5" r="1.4"
+                    fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+
+          </g><!-- /#turtleGroup -->
+
+        </g><!-- /#pathGroup -->
 
       </svg><!-- /#oceanScene -->
 
       <!-- ══════════════════════════════════════════════
            DEPTH CONTENT PANELS
            Each panel is positioned absolutely inside the sticky
-           viewport. JS adds .visible when scroll progress passes
-           the data-threshold. Panels alternate left / right.
+           viewport. JS drives all position/opacity via RAF.
+           Panels linger centred, then anchor to their side,
+           then recede upward out of view as dive continues.
       ══════════════════════════════════════════════ -->
 
-      <!-- Panel 1 — The Framework (left, ~28% from top) -->
+      <!-- Panel 1 — The Framework (left) -->
       <div class="depth-panel dp-left" id="depthPanel1" data-threshold="0.18">
         <div class="dp-depth-tag">30 m · The Framework</div>
         <h3 class="dp-title">Three Questions Before Every Investment</h3>
@@ -285,7 +279,7 @@
         <p class="dp-note">If all three answers are yes, I write the thesis.</p>
       </div>
 
-      <!-- Panel 2 — Latest Deep Dive (right, ~44% from top) -->
+      <!-- Panel 2 — Latest Deep Dive (right) -->
       <div class="depth-panel dp-right" id="depthPanel2" data-threshold="0.38">
         <div class="dp-depth-tag">100 m · Latest Work</div>
         <h3 class="dp-title">Latest Deep Dive</h3>
@@ -304,7 +298,7 @@
         </a>
       </div>
 
-      <!-- Panel 3 — Conviction (left, ~60% from top) -->
+      <!-- Panel 3 — Conviction (left) -->
       <div class="depth-panel dp-left" id="depthPanel3" data-threshold="0.58">
         <div class="dp-depth-tag">300 m · Conviction</div>
         <blockquote class="dp-quote">
@@ -317,7 +311,7 @@
         </p>
       </div>
 
-      <!-- Panel 4 — CTA (centre, ~76% from top) -->
+      <!-- Panel 4 — CTA (centre) -->
       <div class="depth-panel dp-centre" id="depthPanel4" data-threshold="0.76">
         <div class="dp-depth-tag">500 m · The Full Portfolio</div>
         <h3 class="dp-title">You've Reached the Bottom.</h3>

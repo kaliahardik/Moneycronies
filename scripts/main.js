@@ -39,6 +39,7 @@ const scrollCueEl       = $('#scrollCue');
 const dmFill            = $('#dmFill');
 const dmDot             = $('#dmDot');
 const dmReadout         = $('#dmReadout');
+const pathGroupEl       = document.getElementById('pathGroup');
 
 // Depth labels for the readout (map progress → display string)
 const DEPTH_LABELS = [
@@ -73,56 +74,80 @@ if (divePath && turtleGroup && heroScrollWrapper) {
   ].map(z => ({ ...z, el: document.getElementById(z.id) }))
    .filter(z => z.el);
 
-  /* Animate every panel based on overall scroll progress */
+  /* Animate every panel based on overall scroll progress.
+     Each panel passes through five phases:
+       1. Off-screen (invisible, parked on its side)
+       2. Entering   (slides from side to centre, grows to full size)
+       3. Lingering  (stays centred at 100% opacity — the "readable" window)
+       4. Drifting   (eases from centre to anchor point on its side)
+       5. Receding   (anchored, translates upward out of view as dive continues)
+     Scrolling back up reverses all phases, so panels re-appear from the top. */
   const updatePanels = (progress) => {
-    const slideRange  = Math.min(window.innerWidth * 0.52, 460);
-    const restFrac    = 0.65;  // resting X as fraction of slideRange (far to the side)
-    const restOpacity = 0.22;  // opacity of panels that have been passed
-    const restScale   = 0.68;  // scale of resting panels — appear smaller / further away
-    const entryWidth  = 0.12;  // progress range to slide in from side to centre
-    const driftWidth  = 0.11;  // progress range to drift to rest position after peak
+    const slideRange  = Math.min(window.innerWidth * 0.52, 480);
+    const restFrac    = 0.76;   // anchor X as fraction of slideRange (near the S-curve)
+    const restOpacity = 0.18;   // opacity once anchored to the side
+    const restScale   = 0.64;   // scale once anchored — feels more distant
+    const entryWidth  = 0.11;   // progress range to slide in from side to centre
+    const lingerWidth = 0.14;   // progress range panel stays centred at full opacity
+    const driftWidth  = 0.08;   // progress range to ease out to anchor point
+    const anchorDelta = lingerWidth + driftWidth; // delta when fully anchored
+    // How fast the anchored panel recedes upward (CSS px per progress unit).
+    // At 5.5× innerHeight per unit, the panel clears the viewport top in ~0.10 progress.
+    const recedeRate  = window.innerHeight * 5.5;
 
     PANEL_ZONES.forEach(({ el, side, peakAt }) => {
-      // delta: negative = not reached peak yet, 0 = at peak, positive = past peak
+      // delta: negative = not yet reached peak, 0 = at peak, positive = past peak
       const delta = progress - peakAt;
       const dir   = side === 'left' ? -1 : (side === 'right' ? 1 : 0);
 
-      let xOffset, opacity, scale;
+      let xOffset, yOffset = 0, opacity, scale;
 
       if (side === 'centre') {
+        // Centre panel: only fades in and stays — no side drift, no recede
         xOffset = 0;
         scale   = 1;
         opacity = delta < -entryWidth ? 0
                 : delta < 0           ? eio((delta + entryWidth) / entryWidth)
                 :                       1;
+
       } else if (delta < -entryWidth) {
-        // Not yet in view — parked off on its side, invisible
+        // Phase 1 — off-screen: parked on its side, invisible
         xOffset = dir * slideRange;
         opacity = 0;
         scale   = restScale;
+
       } else if (delta < 0) {
-        // Entering: sliding from side to centre, growing to full size
+        // Phase 2 — entering: slides from side to centre, grows to full size
         const e = eio((delta + entryWidth) / entryWidth);  // 0 → 1
         xOffset = dir * slideRange * (1 - e);
         opacity = e;
         scale   = restScale + (1 - restScale) * e;
-      } else if (delta < driftWidth) {
-        // Drifting: easing from centre back to its side, shrinking
-        const e = eio(delta / driftWidth);  // 0 → 1
+
+      } else if (delta < lingerWidth) {
+        // Phase 3 — lingering: fully centred and readable
+        xOffset = 0;
+        opacity = 1;
+        scale   = 1;
+
+      } else if (delta < anchorDelta) {
+        // Phase 4 — drifting: eases out to anchor position, shrinks and fades
+        const e = eio((delta - lingerWidth) / driftWidth);  // 0 → 1
         xOffset = dir * slideRange * restFrac * e;
         opacity = 1 - (1 - restOpacity) * e;
-        scale   = 1 - (1 - restScale) * e;
+        scale   = 1 - (1 - restScale)   * e;
+
       } else {
-        // At rest: stays visible on its side, smaller and faded
+        // Phase 5 — receding: anchored to the S-curve side, scrolling upward
         xOffset = dir * slideRange * restFrac;
         opacity = restOpacity;
         scale   = restScale;
+        yOffset = -(delta - anchorDelta) * recedeRate;
       }
 
-      el.style.transform     = `translateX(calc(-50% + ${xOffset.toFixed(1)}px)) translateY(-50%) scale(${scale.toFixed(3)})`;
-      el.style.opacity       = Math.max(0, opacity).toFixed(3);
-      // Active panel renders above resting ones
-      el.style.zIndex        = Math.abs(delta) < driftWidth ? '9' : '7';
+      el.style.transform     = `translateX(calc(-50% + ${xOffset.toFixed(1)}px)) translateY(calc(-50% + ${yOffset.toFixed(1)}px)) scale(${scale.toFixed(3)})`;
+      el.style.opacity       = Math.max(0, Math.min(1, opacity)).toFixed(3);
+      // Lingering panel renders on top; receding panels behind
+      el.style.zIndex        = (delta >= 0 && delta < lingerWidth) ? '9' : '7';
       el.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none';
     });
   };
@@ -187,6 +212,18 @@ if (divePath && turtleGroup && heroScrollWrapper) {
         if (progress >= d.at) label = d.label;
       }
       dmReadout.textContent = label;
+    }
+
+    // ── 6. S-curves + fish parallax — the dive path world recedes upward ──
+    // pathGroup contains both dive paths AND the animated fish.
+    // Translating it upward (in SVG units) as progress increases makes the
+    // upper sections of the path exit the viewport, simulating the feeling
+    // of descending through the water column. The fish stays on the path
+    // because both the path and the fish are children of the same group.
+    if (pathGroupEl) {
+      // 340 SVG units ≈ 38% of viewport height by end of dive.
+      // Upper S-curve exits the viewport top; fish drifts toward centre.
+      pathGroupEl.setAttribute('transform', `translate(0, ${(-progress * 340).toFixed(1)})`);
     }
   };
 
