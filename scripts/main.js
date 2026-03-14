@@ -21,73 +21,79 @@ if (nav) {
 }
 
 /* ============================================================
-   2. TURTLE SCROLL ANIMATION (Hero page only)
+   2. TURTLE PATH ANIMATION — scroll-driven (Hero page only)
+
+   The hero wrapper is 280vh tall; the inner sticky div is
+   100vh so the ocean stays fixed while the user scrolls
+   180vh worth.  We map that scroll progress [0→1] to a
+   position along an SVG cubic-bezier path (id="divePath").
+
+   getTotalLength() / getPointAtLength() handle all the math;
+   we just set the turtle <g> transform each frame.
+   Because the turtle lives *inside* the SVG, its coordinates
+   are in SVG-space (1440×900) — no viewport conversion needed.
    ============================================================ */
-const turtleWrapper = $('#turtleWrapper');
+const heroScrollWrapper = $('#heroScrollWrapper');
+const divePath          = $('#divePath');
+const turtleGroup       = $('#turtleGroup');
+const heroContent       = $('#heroContent');
+const scrollCueEl       = $('#scrollCue');
 
-if (turtleWrapper) {
-  // The turtle starts near the top-center and dives down as the user scrolls.
-  // It also gently tilts (rotate) to simulate swimming downward.
+if (divePath && turtleGroup && heroScrollWrapper) {
 
-  let rafId = null;
-  let currentY   = 0;   // rendered position
-  let currentRot = 0;   // rendered rotation
-  let targetY    = 0;
-  let targetRot  = 0;
+  const pathLength = divePath.getTotalLength();
 
-  const heroStage = $('.hero-stage');
-
-  const updateTurtleTarget = () => {
-    if (!heroStage) return;
-    const heroH = heroStage.offsetHeight;
-    const scrolled = window.scrollY;
-    // Scroll progress [0 → 1] over the hero section
-    const progress = Math.min(scrolled / (heroH * 0.9), 1);
-
-    // Y: from 15% → 80% of hero height (turtle dives down)
-    targetY = heroH * (0.15 + progress * 0.65);
-    // Slight downward tilt when diving
-    targetRot = progress * 28;  // degrees
-  };
+  // Smooth-lerp state (avoids jitter on low-res scroll events)
+  let currentDist = 0;
+  let targetDist  = 0;
+  let rafId       = null;
 
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  const animateTurtle = () => {
-    currentY   = lerp(currentY,   targetY,   0.06);
-    currentRot = lerp(currentRot, targetRot, 0.06);
-
-    turtleWrapper.style.top       = `${currentY}px`;
-    turtleWrapper.style.transform = `translateX(-50%) rotate(${currentRot}deg)`;
-
-    rafId = requestAnimationFrame(animateTurtle);
+  const applyTurtleTransform = (dist) => {
+    const pt      = divePath.getPointAtLength(dist);
+    // Sample 2px ahead on the path to compute tangent angle
+    const ptAhead = divePath.getPointAtLength(Math.min(dist + 2, pathLength));
+    // atan2 returns angle where 0° = right, 90° = down
+    const angle   = Math.atan2(ptAhead.y - pt.y, ptAhead.x - pt.x) * (180 / Math.PI);
+    turtleGroup.setAttribute(
+      'transform',
+      `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)}) rotate(${angle.toFixed(2)})`
+    );
   };
 
-  window.addEventListener('scroll', () => {
-    updateTurtleTarget();
-  }, { passive: true });
+  const tick = () => {
+    currentDist = lerp(currentDist, targetDist, 0.08);
+    applyTurtleTransform(currentDist);
+    rafId = requestAnimationFrame(tick);
+  };
 
-  updateTurtleTarget();
-  animateTurtle();
+  const updateTargets = () => {
+    const scrolled  = window.scrollY;
+    const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
+    const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
 
-  // Fade turtle out as user leaves hero
-  window.addEventListener('scroll', () => {
-    if (!heroStage) return;
-    const heroH = heroStage.offsetHeight;
-    const progress = window.scrollY / heroH;
-    // Start fading at 70% scroll through hero
-    const opacity = progress > 0.7 ? Math.max(0, 1 - (progress - 0.7) / 0.3) : 1;
-    turtleWrapper.style.opacity = opacity;
-  }, { passive: true });
+    targetDist = progress * pathLength;
 
-  // Subtle flipper wiggle animation via CSS class toggling
-  const turtleSvg = $('#turtleSvg');
-  if (turtleSvg) {
-    let wiggle = false;
-    setInterval(() => {
-      wiggle = !wiggle;
-      turtleSvg.style.transform = wiggle ? 'scaleX(1.04)' : 'scaleX(1)';
-    }, 800);
-  }
+    // ── Hero text: fade + slide up as turtle dives ──
+    if (heroContent) {
+      // Fully visible at progress=0, fully gone by progress=0.32
+      const textOpacity = Math.max(0, 1 - progress / 0.32);
+      const textSlide   = progress * -50; // px, slides upward
+      heroContent.style.opacity   = textOpacity;
+      heroContent.style.transform =
+        `translate(-50%, calc(-50% + ${textSlide}px))`;
+    }
+
+    // ── Scroll cue: disappears quickly ──
+    if (scrollCueEl) {
+      scrollCueEl.style.opacity = Math.max(0, 1 - progress / 0.1);
+    }
+  };
+
+  window.addEventListener('scroll', updateTargets, { passive: true });
+  updateTargets(); // set initial position
+  tick();          // start animation loop
 }
 
 /* ============================================================
@@ -186,12 +192,17 @@ $$('.article-card').forEach(card => {
 });
 
 /* ============================================================
-   8. ALMANAC GRID subtle parallax on hero
+   8. DEPTH TINT — darken the sticky ocean as turtle dives
+      Drives a CSS custom property --depth-tint on the SVG
+      so the background gradually shifts toward the abyss.
    ============================================================ */
-const heroStageEl = $('.hero-stage');
-if (heroStageEl) {
+const oceanSceneEl = $('#oceanScene');
+if (oceanSceneEl && heroScrollWrapper) {
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    heroStageEl.style.setProperty('--grid-offset', `${y * 0.3}px`);
+    const scrolled  = window.scrollY;
+    const maxScroll = heroScrollWrapper.offsetHeight - window.innerHeight;
+    const progress  = Math.max(0, Math.min(scrolled / maxScroll, 1));
+    // Overlay a semi-transparent dark rect by raising its opacity
+    oceanSceneEl.style.setProperty('--depth-progress', progress.toFixed(3));
   }, { passive: true });
 }

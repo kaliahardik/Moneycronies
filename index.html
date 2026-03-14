@@ -23,115 +23,313 @@
     </ul>
   </nav>
 
-  <!-- ── Hero Stage ── -->
-  <section class="hero-stage" aria-label="Hero">
+  <!-- ══════════════════════════════════════════════
+       HERO — Scroll-driven ocean dive
+       Wrapper is 280vh tall; inner div is sticky so
+       the ocean scene stays in view while the user
+       scrolls 180vh, driving the turtle along the path.
+  ══════════════════════════════════════════════ -->
+  <div class="hero-scroll-wrapper" id="heroScrollWrapper">
+    <div class="hero-sticky">
 
-    <!-- Turtle scene -->
-    <div class="turtle-scene" aria-hidden="true">
-      <div class="turtle-wrapper" id="turtleWrapper">
-        <!-- Ripple rings -->
-        <div class="ripple"></div>
-        <div class="ripple"></div>
-        <div class="ripple"></div>
-        <!-- SVG Turtle -->
-        <svg id="turtleSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
-             width="100%" height="100%" style="overflow:visible;">
+      <!-- ── Full-viewport ocean illustration ── -->
+      <svg id="oceanScene" class="ocean-scene"
+           viewBox="0 0 1440 900"
+           preserveAspectRatio="xMidYMid slice"
+           xmlns="http://www.w3.org/2000/svg"
+           aria-hidden="true">
+        <defs>
 
-          <!-- Shadow under turtle -->
-          <ellipse cx="100" cy="185" rx="40" ry="8" fill="rgba(10,77,110,0.12)" />
+          <!-- Ocean depth gradient: pale sky → shallow → mid → deep → abyss -->
+          <linearGradient id="oceanGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#e4f4fb"/>
+            <stop offset="13%"  stop-color="#7ecae0"/>
+            <stop offset="32%"  stop-color="#1B6CA8"/>
+            <stop offset="58%"  stop-color="#0d5585"/>
+            <stop offset="100%" stop-color="#041e30"/>
+          </linearGradient>
 
-          <!-- Shell base -->
-          <ellipse cx="100" cy="105" rx="52" ry="42" fill="#1A6B3C" />
+          <!-- Crepuscular light rays fade as they go deep -->
+          <linearGradient id="rayGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.22"/>
+            <stop offset="75%"  stop-color="#ffffff" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
 
-          <!-- Shell highlight -->
-          <ellipse cx="90" cy="90" rx="36" ry="28" fill="#2E8B57" opacity="0.7" />
+          <!-- Soft caustic shimmer on sea floor -->
+          <radialGradient id="causticGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stop-color="#1B6CA8" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#041e30" stop-opacity="0"/>
+          </radialGradient>
 
-          <!-- Shell scutes (hexagonal plates) -->
-          <g stroke="#145a30" stroke-width="1.2" fill="none" opacity="0.8">
-            <!-- Centre plate -->
-            <polygon points="100,80 114,88 114,104 100,112 86,104 86,88" />
-            <!-- Top left -->
-            <polygon points="80,72 94,80 94,96 80,104 66,96 66,80" />
-            <!-- Top right -->
-            <polygon points="120,72 134,80 134,96 120,104 106,96 106,80" />
-            <!-- Bottom left -->
-            <polygon points="82,102 96,110 96,126 82,134 68,126 68,110" />
-            <!-- Bottom right -->
-            <polygon points="118,102 132,110 132,126 118,134 104,126 104,110" />
+          <!-- Drop shadow on the turtle -->
+          <filter id="turtleShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="3" stdDeviation="7"
+                          flood-color="#041e30" flood-opacity="0.45"/>
+          </filter>
+
+          <!-- Glow for the dive path line -->
+          <filter id="pathGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+
+        </defs>
+
+        <!-- ═══ BACKGROUND ═══ -->
+        <rect width="1440" height="900" fill="url(#oceanGrad)"/>
+
+        <!-- Subtle depth bands (horizontal haloclines) -->
+        <rect x="0" y="220" width="1440" height="1.5" fill="white" opacity="0.05"/>
+        <rect x="0" y="390" width="1440" height="1.5" fill="white" opacity="0.04"/>
+        <rect x="0" y="560" width="1440" height="1.5" fill="white" opacity="0.03"/>
+        <rect x="0" y="730" width="1440" height="1.5" fill="white" opacity="0.02"/>
+
+        <!-- ═══ CREPUSCULAR LIGHT RAYS ═══ -->
+        <polygon points="560,0  620,0  480,820"  fill="url(#rayGrad)" opacity="0.8"/>
+        <polygon points="650,0  730,0  820,880"  fill="url(#rayGrad)" opacity="1"/>
+        <polygon points="760,0  840,0  1080,860" fill="url(#rayGrad)" opacity="0.8"/>
+        <polygon points="870,0  940,0  1260,800" fill="url(#rayGrad)" opacity="0.6"/>
+        <polygon points="480,0  520,0  240,700"  fill="url(#rayGrad)" opacity="0.55"/>
+        <polygon points="380,0  410,0  100,600"  fill="url(#rayGrad)" opacity="0.35"/>
+
+        <!-- ═══ OCEAN SURFACE ═══ -->
+        <!-- Sky above water -->
+        <path d="M0,0 L1440,0 L1440,132
+                 C1350,118 1260,138 1140,126
+                 C1020,114 900,142  780,128
+                 C660,114  540,140  420,126
+                 C300,112  180,138   60,126
+                 C40,124   20,126    0,124 Z"
+              fill="#e4f4fb" opacity="0.22"/>
+
+        <!-- Water surface line (wavy) -->
+        <path d="M0,124
+                 C 60,116 120,134 200,126
+                 C 280,118 360,138 460,126
+                 C 560,114 660,140 760,126
+                 C 860,112 960,138 1060,126
+                 C 1160,114 1280,136 1360,126
+                 L1440,124"
+              fill="none" stroke="white" stroke-width="2.5" stroke-opacity="0.6"/>
+
+        <!-- Surface foam / sparkle dots -->
+        <circle cx="220"  cy="120" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="460"  cy="117" r="2"   fill="white" opacity="0.7"/>
+        <circle cx="720"  cy="121" r="3"   fill="white" opacity="0.75"/>
+        <circle cx="950"  cy="118" r="2"   fill="white" opacity="0.65"/>
+        <circle cx="1200" cy="122" r="2.5" fill="white" opacity="0.7"/>
+        <circle cx="350"  cy="123" r="1.5" fill="white" opacity="0.6"/>
+        <circle cx="840"  cy="115" r="1.5" fill="white" opacity="0.55"/>
+
+        <!-- ═══ DIVE PATH (turtle trajectory) ═══ -->
+        <!--
+          Path from ocean surface (center) curving right-and-deep,
+          then swinging back left to the seabed — a graceful S-dive.
+          JS reads this path and moves the turtle along it on scroll.
+        -->
+        <path id="divePath"
+              d="M 720,168
+                 C 1000,215 1060,440 850,558
+                 C 640,676  370,714  618,872"
+              fill="none"
+              stroke="white"
+              stroke-width="1.6"
+              stroke-opacity="0.22"
+              stroke-dasharray="9 13"
+              filter="url(#pathGlow)"/>
+
+        <!-- ═══ AMBIENT SCATTERED BUBBLES ═══ -->
+        <g class="ambient-bubbles" opacity="0.5">
+          <!-- left mid-water -->
+          <circle cx="195" cy="360" r="5.5" fill="none" stroke="white" stroke-width="1.2"/>
+          <circle cx="228" cy="318" r="3"   fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="172" cy="295" r="7"   fill="none" stroke="white" stroke-width="1.2"/>
+          <circle cx="215" cy="270" r="2"   fill="none" stroke="white" stroke-width="1"/>
+          <!-- right mid-water -->
+          <circle cx="1110" cy="305" r="4"  fill="none" stroke="white" stroke-width="1.2"/>
+          <circle cx="1148" cy="268" r="6"  fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="1082" cy="245" r="3"  fill="none" stroke="white" stroke-width="1"/>
+          <!-- deep left -->
+          <circle cx="380"  cy="590" r="4"  fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="358"  cy="548" r="2.5" fill="none" stroke="white" stroke-width="1"/>
+          <!-- deep right -->
+          <circle cx="1020" cy="520" r="5"  fill="none" stroke="white" stroke-width="1.2"/>
+          <circle cx="1050" cy="478" r="3"  fill="none" stroke="white" stroke-width="1"/>
+          <!-- bottom cluster -->
+          <circle cx="680"  cy="770" r="3.5" fill="none" stroke="white" stroke-width="1.1"/>
+          <circle cx="700"  cy="730" r="2"   fill="none" stroke="white" stroke-width="1"/>
+          <circle cx="656"  cy="748" r="5"   fill="none" stroke="white" stroke-width="1.2"/>
+        </g>
+
+        <!-- ═══ SMALL FISH SILHOUETTES ═══ -->
+        <g fill="white" opacity="0.1">
+          <!-- single fish -->
+          <path d="M290,370 C302,364 318,370 302,376 Z"/>
+          <path d="M278,370 L290,365 L290,375 Z"/>
+          <!-- school of fish (deep right) -->
+          <path d="M1060,490 C1072,484 1088,490 1072,496 Z"/>
+          <path d="M1048,490 L1060,485 L1060,495 Z"/>
+          <path d="M1072,478 C1084,472 1100,478 1084,484 Z"/>
+          <path d="M1060,478 L1072,473 L1072,483 Z"/>
+          <path d="M1080,502 C1092,496 1108,502 1092,508 Z"/>
+          <path d="M1068,502 L1080,497 L1080,507 Z"/>
+          <!-- deep lone fish -->
+          <path d="M320,680 C334,673 354,680 334,687 Z"/>
+          <path d="M306,680 L320,675 L320,685 Z"/>
+        </g>
+
+        <!-- ═══ SEABED — coral & seaweed silhouettes ═══ -->
+        <g fill="#0A3D5E" opacity="0.45">
+          <!-- Rocks / seabed shelf -->
+          <ellipse cx="200"  cy="897" rx="130" ry="20"/>
+          <ellipse cx="720"  cy="899" rx="180" ry="16"/>
+          <ellipse cx="1240" cy="897" rx="140" ry="18"/>
+          <ellipse cx="500"  cy="900" rx="80"  ry="12"/>
+          <ellipse cx="980"  cy="900" rx="90"  ry="14"/>
+
+          <!-- Left seaweed cluster -->
+          <path d="M 68,900 Q 58,842 72,798 Q 86,754 70,710 Q 54,666 68,900 Z"/>
+          <path d="M 95,900 Q 85,855 100,814 Q115,773  99,732 Q 83,691  95,900 Z"/>
+          <path d="M120,900 Q110,862 126,828 Q142,794 126,760 Q110,726 120,900 Z"/>
+          <!-- Left fan coral -->
+          <path d="M 45,900 Q 25,818  56,755 Q 88,692  68,900 Z" opacity="0.6"/>
+          <path d="M 55,900 L 50,822 Q 38,790  66,778 Q 94,766  78,824 L 72,900 Z"/>
+
+          <!-- Right seaweed cluster -->
+          <path d="M1342,900 Q1332,842 1347,798 Q1362,754 1346,710 Q1330,666 1342,900 Z"/>
+          <path d="M1368,900 Q1358,855 1374,814 Q1390,773 1374,732 Q1358,691 1368,900 Z"/>
+          <path d="M1316,900 Q1306,862 1322,828 Q1338,794 1322,760 Q1306,726 1316,900 Z"/>
+          <!-- Right fan coral -->
+          <path d="M1395,900 Q1418,818 1386,755 Q1354,692 1374,900 Z" opacity="0.6"/>
+
+          <!-- Centre bottom coral -->
+          <path d="M710,900 L706,848 Q695,818 722,808 Q749,798 735,848 L730,900 Z"/>
+          <path d="M730,900 L726,860 Q715,835 738,826 Q761,817 748,858 L744,900 Z"/>
+        </g>
+
+        <!-- ═══ TURTLE (JS will set transform each scroll frame) ═══ -->
+        <!--
+          Turtle is a side-view swimming turtle facing RIGHT (+x).
+          Head center ≈ (46, 1). Tail extends to (-48, 0).
+          JS applies: transform="translate(px,py) rotate(angleDeg)"
+          where angle 0° = facing right, 90° = facing down, etc.
+        -->
+        <g id="turtleGroup" filter="url(#turtleShadow)">
+
+          <!-- Trail bubbles (behind turtle, i.e. at negative x) -->
+          <g class="trail-bubbles">
+            <circle class="tb" cx="-58" cy="-6"  r="4.5" fill="none" stroke="white" stroke-width="1.5"/>
+            <circle class="tb" cx="-72" cy=" 5"  r="2.8" fill="none" stroke="white" stroke-width="1.1"/>
+            <circle class="tb" cx="-86" cy="-3"  r="6"   fill="none" stroke="white" stroke-width="1.5"/>
+            <circle class="tb" cx="-98" cy=" 4"  r="2"   fill="none" stroke="white" stroke-width="1"/>
           </g>
 
-          <!-- Shell rim edge -->
-          <ellipse cx="100" cy="105" rx="52" ry="42" fill="none" stroke="#145a30" stroke-width="2" />
+          <!-- Shell body -->
+          <ellipse cx="0" cy="0" rx="34" ry="24" fill="#1A6B3C"/>
+          <!-- Shell dome highlight (top-left sheen) -->
+          <ellipse cx="-5" cy="-7" rx="21" ry="14" fill="#2E8B57" opacity="0.55"/>
+          <!-- Shell outer rim -->
+          <ellipse cx="0" cy="0" rx="34" ry="24" fill="none"
+                   stroke="#145a30" stroke-width="1.6"/>
+
+          <!-- Shell scute lines -->
+          <g stroke="#145a30" stroke-width="0.9" fill="none" opacity="0.65">
+            <!-- vertical scute dividers -->
+            <line x1="-10" y1="-23" x2="-10" y2="23"/>
+            <line x1="  8" y1="-24" x2="  8" y2="24"/>
+            <line x1=" 22" y1="-19" x2=" 22" y2="19"/>
+            <!-- curved edge scutes -->
+            <path d="M-30,-9 Q-22,0 -30, 9"/>
+            <path d="M 30,-9 Q 22,0  30, 9"/>
+            <!-- top/bottom cross scutes -->
+            <path d="M-10,-23 Q -1,-26  8,-24"/>
+            <path d="M-10, 23 Q -1, 26  8, 24"/>
+            <path d="M  8,-24 Q 15,-22 22,-19"/>
+            <path d="M  8, 24 Q 15, 22 22, 19"/>
+          </g>
+
+          <!-- Neck connecting shell to head -->
+          <path d="M29,-4 Q37,-1 39,1"
+                stroke="#2E8B57" stroke-width="14"
+                fill="none" stroke-linecap="round"/>
 
           <!-- Head -->
-          <ellipse cx="100" cy="62" rx="18" ry="16" fill="#2E8B57" />
+          <ellipse cx="46" cy="1" rx="14" ry="11" fill="#2E8B57"/>
           <!-- Head highlight -->
-          <ellipse cx="94" cy="57" rx="9" ry="7" fill="#3DAE68" opacity="0.5" />
-          <!-- Eye left -->
-          <circle cx="91" cy="56" r="4" fill="#0A4D6E" />
-          <circle cx="92" cy="55" r="1.5" fill="#fff" />
-          <!-- Eye right -->
-          <circle cx="109" cy="56" r="4" fill="#0A4D6E" />
-          <circle cx="110" cy="55" r="1.5" fill="#fff" />
+          <ellipse cx="43" cy="-3" rx="8"  ry="6"  fill="#3DAE68" opacity="0.45"/>
+          <!-- Eye -->
+          <circle cx="52" cy="-3" r="3.8" fill="#0A4D6E"/>
+          <circle cx="52.5" cy="-3.5" r="1.6" fill="white"/>
+          <circle cx="53"   cy="-3"   r="0.7" fill="#030d14"/>
+          <!-- Nostril -->
+          <circle cx="58" cy="1" r="1.2" fill="#145a30"/>
           <!-- Smile -->
-          <path d="M93 65 Q100 70 107 65" stroke="#145a30" stroke-width="1.5" fill="none" stroke-linecap="round" />
-          <!-- Nostrils -->
-          <circle cx="97" cy="62" r="1.2" fill="#145a30" />
-          <circle cx="103" cy="62" r="1.2" fill="#145a30" />
+          <path d="M43,6 Q48,10 53,6"
+                stroke="#145a30" stroke-width="1.2"
+                fill="none" stroke-linecap="round"/>
 
-          <!-- Front left flipper -->
-          <ellipse cx="57" cy="98" rx="16" ry="8" fill="#2E8B57"
-                   transform="rotate(-35 57 98)" />
-          <!-- Front right flipper -->
-          <ellipse cx="143" cy="98" rx="16" ry="8" fill="#2E8B57"
-                   transform="rotate(35 143 98)" />
-          <!-- Rear left flipper -->
-          <ellipse cx="63" cy="138" rx="13" ry="7" fill="#2E8B57"
-                   transform="rotate(30 63 138)" />
-          <!-- Rear right flipper -->
-          <ellipse cx="137" cy="138" rx="13" ry="7" fill="#2E8B57"
-                   transform="rotate(-30 137 138)" />
           <!-- Tail -->
-          <ellipse cx="100" cy="148" rx="6" ry="10" fill="#2E8B57" />
-        </svg>
+          <path d="M-32,0 Q-44,4 -48,2 Q-52,0 -50,-3 Q-46,-5 -42,-2 Q-38,1 -32,0"
+                fill="#2E8B57"/>
 
-        <!-- Bubbles attached to turtle -->
-        <div class="bubble" style="width:8px;height:8px;left:60px;top:20px;animation-delay:0s;animation-duration:3.5s;"></div>
-        <div class="bubble" style="width:5px;height:5px;left:80px;top:10px;animation-delay:0.8s;animation-duration:4s;"></div>
-        <div class="bubble" style="width:10px;height:10px;left:100px;top:5px;animation-delay:1.6s;animation-duration:3s;"></div>
-        <div class="bubble" style="width:6px;height:6px;left:120px;top:18px;animation-delay:2.4s;animation-duration:4.5s;"></div>
+          <!-- Front flipper — near side (top) -->
+          <ellipse cx="6"  cy="-30" rx="24" ry="9" fill="#1f7a44"
+                   transform="rotate( 18  6 -30)"/>
+          <ellipse cx="6"  cy="-30" rx="24" ry="9" fill="none"
+                   stroke="#145a30" stroke-width="0.8"
+                   transform="rotate( 18  6 -30)"/>
+          <!-- Front flipper — far side (bottom, slightly smaller) -->
+          <ellipse cx="6"  cy=" 28" rx="20" ry="7" fill="#145a30" opacity="0.75"
+                   transform="rotate(-14  6  28)"/>
+
+          <!-- Rear flipper — near side (top) -->
+          <ellipse cx="-22" cy="-24" rx="18" ry="7" fill="#1f7a44"
+                   transform="rotate( 28 -22 -24)"/>
+          <ellipse cx="-22" cy="-24" rx="18" ry="7" fill="none"
+                   stroke="#145a30" stroke-width="0.8"
+                   transform="rotate( 28 -22 -24)"/>
+          <!-- Rear flipper — far side (bottom) -->
+          <ellipse cx="-22" cy=" 22" rx="15" ry="6" fill="#145a30" opacity="0.7"
+                   transform="rotate(-22 -22  22)"/>
+
+        </g><!-- /#turtleGroup -->
+
+      </svg><!-- /#oceanScene -->
+
+      <!-- ── Hero text overlay (fades out as turtle dives) ── -->
+      <div class="hero-content" id="heroContent">
+        <span class="hero-eyebrow">Value Investing · Deep Research</span>
+        <h1 class="hero-title">
+          <em>Dive deeper</em><br />
+          into <span class="accent">businesses.</span>
+        </h1>
+        <p class="hero-sub">
+          Conviction-driven research on companies worth understanding —
+          not just owning. Theses, deep dives, and the thinking behind
+          the portfolio.
+        </p>
+        <a href="portfolio.html" class="btn-primary">
+          Explore the Work
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
+        </a>
       </div>
-    </div>
 
-    <!-- Hero text -->
-    <div class="hero-content" style="position:relative;z-index:3;">
-      <span class="hero-eyebrow">Value Investing · Deep Research</span>
-      <h1 class="hero-title">
-        <em>Dive deeper</em><br />
-        into <span class="accent">businesses.</span>
-      </h1>
-      <p class="hero-sub">
-        Conviction-driven research on companies worth understanding — not just owning.
-        Theses, deep dives, and the thinking behind the portfolio.
-      </p>
-      <a href="portfolio.html" class="btn-primary">
-        Explore the Work
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <polyline points="19 12 12 19 5 12"/>
+      <!-- ── Scroll prompt ── -->
+      <div class="scroll-cue" id="scrollCue" aria-hidden="true">
+        <span>Scroll to dive</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round">
+          <polyline points="6 9 12 15 18 9"/>
         </svg>
-      </a>
-    </div>
+      </div>
 
-    <!-- Scroll cue -->
-    <div class="scroll-cue" aria-hidden="true">
-      <span>Scroll</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <polyline points="6 9 12 15 18 9"/>
-      </svg>
-    </div>
-  </section>
+    </div><!-- /.hero-sticky -->
+  </div><!-- /.hero-scroll-wrapper -->
 
   <!-- ── Stats Bar ── -->
   <div class="stats-bar" role="region" aria-label="Quick stats">
