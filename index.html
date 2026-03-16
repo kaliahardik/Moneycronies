@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=13" />
+  <link rel="stylesheet" href="styles/main.css?v=14" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -23,81 +23,185 @@
     </ul>
   </nav>
 
-  <!-- ── Fixed Wave Bar — permanently anchored below nav, always visible ── -->
+  <!-- ── Fixed Wave Bar — transparent div, tall SVG, seamless fade into ocean ── -->
   <div class="fixed-wave" aria-hidden="true">
-    <svg viewBox="0 0 1440 52" preserveAspectRatio="none"
+    <svg viewBox="0 0 1440 280" preserveAspectRatio="none"
          xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!--
+          waveDrop: static vertical gradient rect that bleeds wave colour
+          gradually into the ocean over 200px — no hard div-edge cut.
+          Sits outside animated groups so it never shifts.
+        -->
+        <linearGradient id="waveDrop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#062d52" stop-opacity="1"/>
+          <stop offset="28%"  stop-color="#062d52" stop-opacity="0.72"/>
+          <stop offset="58%"  stop-color="#062d52" stop-opacity="0.28"/>
+          <stop offset="85%"  stop-color="#062d52" stop-opacity="0.07"/>
+          <stop offset="100%" stop-color="#062d52" stop-opacity="0"/>
+        </linearGradient>
 
-      <!-- Wave 1 — primary crashing wave, right → left, 14 s -->
+        <!-- foam1: dashed stroke for breaking white caps -->
+        <linearGradient id="foamFade" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="white" stop-opacity="0.55"/>
+          <stop offset="50%"  stop-color="white" stop-opacity="0.72"/>
+          <stop offset="100%" stop-color="white" stop-opacity="0.55"/>
+        </linearGradient>
+      </defs>
+
+      <!--
+        Static gradient rect — fills y=32→y=280 with fading navy.
+        This is the KEY element that eliminates the hard bottom cut.
+        It sits below all wave crests so it never interferes with the
+        wave shapes, but smoothly carries the colour downward into ocean.
+      -->
+      <rect x="0" y="32" width="2880" height="248" fill="url(#waveDrop)"/>
+
+      <!-- ═══ Wave 1 — primary ocean swell, moves right→left, 16s ═══ -->
       <g>
         <animateTransform attributeName="transform" attributeType="XML"
           type="translate" from="0,0" to="-1440,0"
-          dur="14s" repeatCount="indefinite"/>
+          dur="16s" repeatCount="indefinite"/>
 
-        <!-- Dark navy filled wave body: steep leading face, gentle trailing face -->
-        <path d="M0,36
-                 C65,22  105,6  160,10  C200,14 230,30 290,36
-                 C355,40 400,22 440,10  C472,4  495,7  520,14
-                 C548,20 572,34 632,38  C690,40 720,22 760,8
-                 C796,2  820,6  850,14  C878,22 905,36 968,40
-                 C1030,40 1070,20 1110,8 C1144,2 1166,6 1194,14
-                 C1222,22 1248,36 1308,38 C1355,40 1400,38 1440,36
-                 C1505,22 1545,6  1600,10 C1640,14 1670,30 1730,36
-                 C1795,40 1840,22 1880,10 C1912,4  1935,7  1960,14
-                 C1988,20 2012,34 2072,38 C2130,40 2160,22 2200,8
-                 C2236,2  2260,6  2290,14 C2318,22 2345,36 2408,40
-                 C2470,40 2510,20 2550,8  C2584,2  2606,6  2634,14
-                 C2662,22 2688,36 2748,38 C2795,40 2840,38 2880,36
-                 L2880,52 L0,52 Z"
-              fill="#062d52"/>
+        <!--
+          Asymmetric wave path: each crest has a STEEP leading face
+          (rises fast over ~70px) and a GENTLE trailing slope
+          (drops gradually over ~180px) — matches real ocean physics.
+          Tile is 1440px wide, repeated once for 2880px total.
+        -->
+        <path d="
+          M0,52
+          C30,44  55,28  80,16
+          C95,8   108,5  120,7
+          C136,10 155,20 185,32
+          C215,42 248,52 295,56
+          C342,58 378,46 408,32
+          C432,22 448,14 465,10
+          C480,7  494,6  508,8
+          C524,12 545,24 578,38
+          C610,50 645,58 695,60
+          C740,60 775,48 808,34
+          C832,24 848,14 864,10
+          C880,6  896,6  912,9
+          C930,13 952,26 985,40
+          C1018,52 1055,60 1105,62
+          C1152,62 1188,50 1218,36
+          C1240,26 1255,16 1270,11
+          C1286,7  1302,6  1318,9
+          C1336,13 1358,26 1390,40
+          C1412,50 1430,54 1440,52
+          C1470,44 1495,28 1520,16
+          C1535,8  1548,5  1560,7
+          C1576,10 1595,20 1625,32
+          C1655,42 1688,52 1735,56
+          C1782,58 1818,46 1848,32
+          C1872,22 1888,14 1905,10
+          C1920,7  1934,6  1948,8
+          C1964,12 1985,24 2018,38
+          C2050,50 2085,58 2135,60
+          C2180,60 2215,48 2248,34
+          C2272,24 2288,14 2304,10
+          C2320,6  2336,6  2352,9
+          C2370,13 2392,26 2425,40
+          C2458,52 2495,60 2545,62
+          C2592,62 2628,50 2658,36
+          C2680,26 2695,16 2710,11
+          C2726,7  2742,6  2758,9
+          C2776,13 2798,26 2830,40
+          C2852,50 2870,54 2880,52
+          L2880,280 L0,280 Z"
+          fill="#062d52"/>
 
-        <!-- White foam — highlights the crest of each wave -->
-        <path d="M0,36
-                 C65,22  105,6  160,10  C200,14 230,30 290,36
-                 C355,40 400,22 440,10  C472,4  495,7  520,14
-                 C548,20 572,34 632,38  C690,40 720,22 760,8
-                 C796,2  820,6  850,14  C878,22 905,36 968,40
-                 C1030,40 1070,20 1110,8 C1144,2 1166,6 1194,14
-                 C1222,22 1248,36 1308,38 C1355,40 1400,38 1440,36
-                 C1505,22 1545,6  1600,10 C1640,14 1670,30 1730,36
-                 C1795,40 1840,22 1880,10 C1912,4  1935,7  1960,14
-                 C1988,20 2012,34 2072,38 C2130,40 2160,22 2200,8
-                 C2236,2  2260,6  2290,14 C2318,22 2345,36 2408,40
-                 C2470,40 2510,20 2550,8  C2584,2  2606,6  2634,14
-                 C2662,22 2688,36 2748,38 C2795,40 2840,38 2880,36"
-              fill="none" stroke="rgba(255,255,255,0.60)" stroke-width="2.2"
-              stroke-linecap="round"/>
+        <!-- Breaking crest foam line — irregular dashes simulate turbulence -->
+        <path d="
+          M80,16 C95,8 108,5 120,7 C136,10 155,20 185,32
+          M465,10 C480,7 494,6 508,8 C524,12 545,24 578,38
+          M864,10 C880,6 896,6 912,9 C930,13 952,26 985,40
+          M1270,11 C1286,7 1302,6 1318,9 C1336,13 1358,26 1390,40
+          M1520,16 C1535,8 1548,5 1560,7 C1576,10 1595,20 1625,32
+          M1905,10 C1920,7 1934,6 1948,8 C1964,12 1985,24 2018,38
+          M2304,10 C2320,6 2336,6 2352,9 C2370,13 2392,26 2425,40
+          M2710,11 C2726,7 2742,6 2758,9 C2776,13 2798,26 2830,40"
+          fill="none"
+          stroke="rgba(255,255,255,0.68)"
+          stroke-width="2.8"
+          stroke-dasharray="18 6 4 3 10 5 3 7"
+          stroke-linecap="round"/>
 
-        <!-- Foam speckles at wave peaks — simulate breaking crests -->
-        <ellipse cx="160"  cy="9"  rx="14" ry="3.5" fill="rgba(255,255,255,0.28)"/>
-        <ellipse cx="440"  cy="9"  rx="12" ry="3"   fill="rgba(255,255,255,0.24)"/>
-        <ellipse cx="760"  cy="7"  rx="16" ry="4"   fill="rgba(255,255,255,0.30)"/>
-        <ellipse cx="1110" cy="7"  rx="14" ry="3.5" fill="rgba(255,255,255,0.26)"/>
-        <ellipse cx="1600" cy="9"  rx="14" ry="3.5" fill="rgba(255,255,255,0.28)"/>
-        <ellipse cx="1880" cy="9"  rx="12" ry="3"   fill="rgba(255,255,255,0.24)"/>
-        <ellipse cx="2200" cy="7"  rx="16" ry="4"   fill="rgba(255,255,255,0.30)"/>
-        <ellipse cx="2550" cy="7"  rx="14" ry="3.5" fill="rgba(255,255,255,0.26)"/>
+        <!-- Foam at crests — flat spray ellipses right at the peak -->
+        <ellipse cx="120"  cy="6"  rx="22" ry="5"   fill="rgba(255,255,255,0.32)"/>
+        <ellipse cx="508"  cy="7"  rx="18" ry="4.5" fill="rgba(255,255,255,0.26)"/>
+        <ellipse cx="912"  cy="8"  rx="24" ry="5.5" fill="rgba(255,255,255,0.30)"/>
+        <ellipse cx="1318" cy="8"  rx="20" ry="4.5" fill="rgba(255,255,255,0.28)"/>
+        <ellipse cx="1560" cy="6"  rx="22" ry="5"   fill="rgba(255,255,255,0.32)"/>
+        <ellipse cx="1948" cy="7"  rx="18" ry="4.5" fill="rgba(255,255,255,0.26)"/>
+        <ellipse cx="2352" cy="8"  rx="24" ry="5.5" fill="rgba(255,255,255,0.30)"/>
+        <ellipse cx="2758" cy="8"  rx="20" ry="4.5" fill="rgba(255,255,255,0.28)"/>
+
+        <!-- Airborne spray — tiny ellipses above the crests, simulate splash -->
+        <ellipse cx="118"  cy="0"  rx="10" ry="2.5" fill="rgba(255,255,255,0.18)"/>
+        <ellipse cx="122"  cy="-4" rx="5"  ry="1.5" fill="rgba(255,255,255,0.12)"/>
+        <ellipse cx="910"  cy="1"  rx="12" ry="3"   fill="rgba(255,255,255,0.16)"/>
+        <ellipse cx="915"  cy="-3" rx="6"  ry="1.8" fill="rgba(255,255,255,0.10)"/>
+        <ellipse cx="1558" cy="0"  rx="10" ry="2.5" fill="rgba(255,255,255,0.18)"/>
+        <ellipse cx="1562" cy="-4" rx="5"  ry="1.5" fill="rgba(255,255,255,0.12)"/>
+        <ellipse cx="2350" cy="1"  rx="12" ry="3"   fill="rgba(255,255,255,0.16)"/>
+        <ellipse cx="2354" cy="-3" rx="6"  ry="1.8" fill="rgba(255,255,255,0.10)"/>
       </g>
 
-      <!-- Wave 2 — secondary swell, left → right, 22 s, slightly transparent -->
+      <!-- ═══ Wave 2 — secondary swell, moves left→right, 26s ═══ -->
       <g>
         <animateTransform attributeName="transform" attributeType="XML"
           type="translate" from="-1440,0" to="0,0"
-          dur="22s" repeatCount="indefinite"/>
+          dur="26s" repeatCount="indefinite"/>
 
-        <path d="M0,40
-                 C120,30 190,18 280,22  C365,26 405,38 475,40
-                 C545,44 585,28 650,16  C688,8  715,14 755,24
-                 C790,32 820,42 905,44  C985,44 1025,28 1090,16
-                 C1125,8  1152,14 1192,24 C1232,32 1262,42 1340,44
-                 C1385,44 1415,42 1440,40
-                 C1560,30 1630,18 1720,22 C1805,26 1845,38 1915,40
-                 C1985,44 2025,28 2090,16 C2128,8  2155,14 2195,24
-                 C2230,32 2260,42 2345,44 C2425,44 2465,28 2530,16
-                 C2565,8  2592,14 2632,24 C2672,32 2702,42 2780,44
-                 C2825,44 2855,42 2880,40
-                 L2880,52 L0,52 Z"
-              fill="rgba(10,45,78,0.55)"/>
+        <!-- Gentler secondary swell, slightly offset phase -->
+        <path d="
+          M0,62
+          C80,50  155,34  230,26
+          C275,20 310,18  348,22
+          C384,26 414,38  460,48
+          C504,56 545,62  600,64
+          C652,64 690,52  726,38
+          C755,28 775,20  800,16
+          C824,12 848,12  872,16
+          C898,21 922,34  965,48
+          C1005,60 1045,66 1098,66
+          C1148,66 1185,54 1218,40
+          C1244,30 1262,20 1282,16
+          C1302,12 1324,12 1346,16
+          C1370,21 1395,34 1435,48
+          C1440,50 1440,52 1440,62
+          C1520,50 1595,34 1670,26
+          C1715,20 1750,18 1788,22
+          C1824,26 1854,38 1900,48
+          C1944,56 1985,62 2040,64
+          C2092,64 2130,52 2166,38
+          C2195,28 2215,20 2240,16
+          C2264,12 2288,12 2312,16
+          C2338,21 2362,34 2405,48
+          C2445,60 2485,66 2538,66
+          C2588,66 2625,54 2658,40
+          C2684,30 2702,20 2722,16
+          C2742,12 2764,12 2786,16
+          C2810,21 2835,34 2875,48
+          C2878,49 2880,50 2880,62
+          L2880,280 L0,280 Z"
+          fill="rgba(8,38,68,0.48)"/>
+
+        <!-- Subtle foam on secondary crests -->
+        <path d="
+          M348,22 C384,26 414,38 460,48
+          M800,16 C824,12 848,12 872,16 C898,21 922,34 965,48
+          M1282,16 C1302,12 1324,12 1346,16 C1370,21 1395,34 1435,48
+          M1788,22 C1824,26 1854,38 1900,48
+          M2240,16 C2264,12 2288,12 2312,16 C2338,21 2362,34 2405,48
+          M2722,16 C2742,12 2764,12 2786,16 C2810,21 2835,34 2875,48"
+          fill="none"
+          stroke="rgba(255,255,255,0.28)"
+          stroke-width="1.6"
+          stroke-dasharray="12 8 3 5"
+          stroke-linecap="round"/>
       </g>
 
     </svg>

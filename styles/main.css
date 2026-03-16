@@ -97,22 +97,17 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: var(--green); }
 
-/* Fixed wave bar — sits right below the nav, blends seamlessly into the ocean */
+/* Fixed wave bar — transparent so the ocean shows through above the crests */
 .fixed-wave {
   position: fixed;
   top: 56px;
   left: 0;
   right: 0;
-  height: 80px;    /* tall so the fade has room to breathe */
+  height: 280px;   /* tall so the gradient rect can fade over 200px */
   z-index: 99;
   overflow: hidden;
   pointer-events: none;
-  background: var(--cream);  /* cream fills the space above the wave crests */
-  /* CSS mask fades the ENTIRE div (background + SVG) to transparent at the
-     bottom — this is the correct way to get a seamless ocean blend.
-     The wave shapes dissolve naturally into the ocean surface below. */
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 32%, transparent 78%);
-          mask-image: linear-gradient(to bottom, black 0%, black 32%, transparent 78%);
+  background: transparent; /* ocean visible above crest line — no white bar */
 }
 .fixed-wave svg {
   position: absolute;
