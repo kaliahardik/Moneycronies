@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=9" />
+  <link rel="stylesheet" href="styles/main.css?v=11" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -22,6 +22,86 @@
       <li><a href="portfolio.html#about">About</a></li>
     </ul>
   </nav>
+
+  <!-- ── Fixed Wave Bar — permanently anchored below nav, always visible ── -->
+  <div class="fixed-wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 52" preserveAspectRatio="none"
+         xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Wave 1 — primary crashing wave, right → left, 14 s -->
+      <g>
+        <animateTransform attributeName="transform" attributeType="XML"
+          type="translate" from="0,0" to="-1440,0"
+          dur="14s" repeatCount="indefinite"/>
+
+        <!-- Dark navy filled wave body: steep leading face, gentle trailing face -->
+        <path d="M0,36
+                 C65,22  105,6  160,10  C200,14 230,30 290,36
+                 C355,40 400,22 440,10  C472,4  495,7  520,14
+                 C548,20 572,34 632,38  C690,40 720,22 760,8
+                 C796,2  820,6  850,14  C878,22 905,36 968,40
+                 C1030,40 1070,20 1110,8 C1144,2 1166,6 1194,14
+                 C1222,22 1248,36 1308,38 C1355,40 1400,38 1440,36
+                 C1505,22 1545,6  1600,10 C1640,14 1670,30 1730,36
+                 C1795,40 1840,22 1880,10 C1912,4  1935,7  1960,14
+                 C1988,20 2012,34 2072,38 C2130,40 2160,22 2200,8
+                 C2236,2  2260,6  2290,14 C2318,22 2345,36 2408,40
+                 C2470,40 2510,20 2550,8  C2584,2  2606,6  2634,14
+                 C2662,22 2688,36 2748,38 C2795,40 2840,38 2880,36
+                 L2880,52 L0,52 Z"
+              fill="#062d52"/>
+
+        <!-- White foam — highlights the crest of each wave -->
+        <path d="M0,36
+                 C65,22  105,6  160,10  C200,14 230,30 290,36
+                 C355,40 400,22 440,10  C472,4  495,7  520,14
+                 C548,20 572,34 632,38  C690,40 720,22 760,8
+                 C796,2  820,6  850,14  C878,22 905,36 968,40
+                 C1030,40 1070,20 1110,8 C1144,2 1166,6 1194,14
+                 C1222,22 1248,36 1308,38 C1355,40 1400,38 1440,36
+                 C1505,22 1545,6  1600,10 C1640,14 1670,30 1730,36
+                 C1795,40 1840,22 1880,10 C1912,4  1935,7  1960,14
+                 C1988,20 2012,34 2072,38 C2130,40 2160,22 2200,8
+                 C2236,2  2260,6  2290,14 C2318,22 2345,36 2408,40
+                 C2470,40 2510,20 2550,8  C2584,2  2606,6  2634,14
+                 C2662,22 2688,36 2748,38 C2795,40 2840,38 2880,36"
+              fill="none" stroke="rgba(255,255,255,0.60)" stroke-width="2.2"
+              stroke-linecap="round"/>
+
+        <!-- Foam speckles at wave peaks — simulate breaking crests -->
+        <ellipse cx="160"  cy="9"  rx="14" ry="3.5" fill="rgba(255,255,255,0.28)"/>
+        <ellipse cx="440"  cy="9"  rx="12" ry="3"   fill="rgba(255,255,255,0.24)"/>
+        <ellipse cx="760"  cy="7"  rx="16" ry="4"   fill="rgba(255,255,255,0.30)"/>
+        <ellipse cx="1110" cy="7"  rx="14" ry="3.5" fill="rgba(255,255,255,0.26)"/>
+        <ellipse cx="1600" cy="9"  rx="14" ry="3.5" fill="rgba(255,255,255,0.28)"/>
+        <ellipse cx="1880" cy="9"  rx="12" ry="3"   fill="rgba(255,255,255,0.24)"/>
+        <ellipse cx="2200" cy="7"  rx="16" ry="4"   fill="rgba(255,255,255,0.30)"/>
+        <ellipse cx="2550" cy="7"  rx="14" ry="3.5" fill="rgba(255,255,255,0.26)"/>
+      </g>
+
+      <!-- Wave 2 — secondary swell, left → right, 22 s, slightly transparent -->
+      <g>
+        <animateTransform attributeName="transform" attributeType="XML"
+          type="translate" from="-1440,0" to="0,0"
+          dur="22s" repeatCount="indefinite"/>
+
+        <path d="M0,40
+                 C120,30 190,18 280,22  C365,26 405,38 475,40
+                 C545,44 585,28 650,16  C688,8  715,14 755,24
+                 C790,32 820,42 905,44  C985,44 1025,28 1090,16
+                 C1125,8  1152,14 1192,24 C1232,32 1262,42 1340,44
+                 C1385,44 1415,42 1440,40
+                 C1560,30 1630,18 1720,22 C1805,26 1845,38 1915,40
+                 C1985,44 2025,28 2090,16 C2128,8  2155,14 2195,24
+                 C2230,32 2260,42 2345,44 C2425,44 2465,28 2530,16
+                 C2565,8  2592,14 2632,24 C2672,32 2702,42 2780,44
+                 C2825,44 2855,42 2880,40
+                 L2880,52 L0,52 Z"
+              fill="rgba(10,45,78,0.55)"/>
+      </g>
+
+    </svg>
+  </div>
 
   <!-- ══════════════════════════════════════════════════════════
        HERO — 500vh scroll wrapper; inner sticky div is 100vh.
@@ -94,49 +174,6 @@
         <polygon points="880,0  955,0  1320,820" fill="url(#rayGrad)" opacity="0.6"/>
         <polygon points="465,0  502,0  220,700"  fill="url(#rayGrad)" opacity="0.55"/>
         <polygon points="360,0  390,0   80,620"  fill="url(#rayGrad)" opacity="0.35"/>
-
-        <!--
-          ANIMATED WATER SURFACE — two wave layers at different speeds.
-          Each path is 2880px wide (two seamless tiles of 1440px).
-          Wave 1 travels right→left (dur 14s).
-          Wave 2 travels left→right at a slower pace (dur 22s),
-          creating an organic, continuously shifting ocean surface.
-          SMIL animateTransform loops indefinitely with no visible jump
-          because the path tiles perfectly at the 1440px repeat interval.
-        -->
-
-        <!-- Wave 1 — primary surface line, right → left -->
-        <g>
-          <animateTransform attributeName="transform" attributeType="XML"
-            type="translate" from="0,0" to="-1440,0"
-            dur="14s" repeatCount="indefinite"/>
-          <path d="M0,124 C 60,114 130,136 220,124
-                   C 310,112 400,138 510,124
-                   C 620,110 730,138 840,124
-                   C 950,110 1060,136 1170,124
-                   C 1280,112 1360,134 1440,124
-                   C 1500,114 1570,136 1660,124
-                   C 1750,112 1840,138 1950,124
-                   C 2060,110 2170,138 2280,124
-                   C 2390,110 2500,136 2610,124
-                   C 2720,112 2800,134 2880,124"
-                fill="none" stroke="white" stroke-width="2.2" stroke-opacity="0.55"/>
-        </g>
-
-        <!-- Wave 2 — secondary ripple, left → right, different wavelength -->
-        <g>
-          <animateTransform attributeName="transform" attributeType="XML"
-            type="translate" from="-1440,0" to="0,0"
-            dur="22s" repeatCount="indefinite"/>
-          <path d="M0,129 C 100,119 230,141 400,129
-                   C 570,117 680,139 860,129
-                   C 1040,119 1160,139 1340,129
-                   C 1520,119 1620,137 1840,129
-                   C 2000,119 2120,139 2300,129
-                   C 2460,119 2580,137 2740,129
-                   C 2820,119 2860,133 2880,129"
-                fill="none" stroke="white" stroke-width="1.3" stroke-opacity="0.24"/>
-        </g>
 
         <!-- Surface sparkles — fixed twinkle points on the water -->
         <circle cx="190"  cy="118" r="2.2" fill="white" opacity="0.8"/>
