@@ -97,17 +97,24 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: var(--green); }
 
-/* Fixed wave bar — sits just below the nav, always visible */
+/* Fixed wave bar — sits right below the nav, blends into the ocean */
 .fixed-wave {
   position: fixed;
-  top: 60px;      /* nav height ≈ 56px + 4px breathing room */
+  top: 56px;      /* flush with nav bottom */
   left: 0;
   right: 0;
-  height: 52px;
-  z-index: 99;    /* below nav (100), above hero ocean */
+  height: 64px;   /* tall enough for the fade to breathe */
+  z-index: 99;
   overflow: hidden;
   pointer-events: none;
-  background: var(--cream); /* cream above the wave line */
+  /* Cream at top (matches nav), fades to transparent so the ocean
+     shows through — eliminates the hard horizontal cut line */
+  background: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    var(--cream) 26%,
+    transparent  66%
+  );
 }
 .fixed-wave svg {
   position: absolute;
@@ -585,9 +592,9 @@ img { max-width: 100%; display: block; }
     to bottom,
     #041c35  0%,
     #062d52 30%,
-    #062d52 65%,
-    #0d1f2d 85%,
-    #121212 100%   /* flows into the dark footer */
+    #062d52 62%,
+    #0d1a10 82%,   /* deep mossy green — ocean floor sediment */
+    #0e1206 100%   /* dark earthy wood — treasure chest base */
   );
   overflow: hidden;
 }
@@ -1012,31 +1019,51 @@ img { max-width: 100%; display: block; }
 .contact-link:hover { color: var(--green); }
 .contact-link svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--green); }
 
-/* ── Footer ── */
+/* ── Footer — treasure chest at the ocean floor ── */
 .site-footer {
-  padding: 48px 24px;
-  background: var(--ink);
-  color: rgba(255,255,255,0.5);
+  padding: 52px 24px 44px;
+  position: relative;
+  /* Dark warm wood — like the hull of a sunken chest */
+  background: linear-gradient(to bottom, #0e1206 0%, #120e04 50%, #0b0a03 100%);
+  color: rgba(201,168,76,0.40);
   text-align: center;
+  overflow: hidden;
+}
+/* Gold band at top — the metal clasp of the chest */
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent          0%,
+    rgba(201,168,76,0.6) 20%,
+    rgba(248,230,180,0.5) 50%,
+    rgba(201,168,76,0.6) 80%,
+    transparent          100%
+  );
 }
 .footer-logo {
   font-family: var(--font-serif);
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--white);
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(201,168,76,0.30);
   margin-bottom: 8px;
 }
-.footer-logo span { color: var(--green-light); }
+.footer-logo span { color: rgba(201,168,76,0.65); }
 .footer-tagline {
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: rgba(201,168,76,0.38);
   margin-bottom: 24px;
 }
 .footer-nav { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
-.footer-nav a { font-size: 0.8rem; color: rgba(255,255,255,0.5); transition: color var(--transition); }
-.footer-nav a:hover { color: var(--white); }
-.footer-copy { font-size: 0.75rem; }
+.footer-nav a { font-size: 0.78rem; color: rgba(201,168,76,0.32); transition: color var(--transition); }
+.footer-nav a:hover { color: var(--gold); }
+.footer-copy { font-size: 0.72rem; color: rgba(201,168,76,0.24); }
 
 /* ============================================================
    ANIMATIONS & TRANSITIONS
