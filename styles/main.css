@@ -97,17 +97,19 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: var(--green); }
 
-/* Fixed wave bar — transparent so the ocean shows through above the crests */
+/* Fixed wave bar */
 .fixed-wave {
   position: fixed;
   top: 56px;
   left: 0;
   right: 0;
-  height: 280px;   /* tall so the gradient rect can fade over 200px */
+  height: 140px;
   z-index: 99;
   overflow: hidden;
   pointer-events: none;
-  background: transparent; /* ocean visible above crest line — no white bar */
+  background: var(--cream);
+  /* Cream is only ever visible for ~36px above the ocean surface baseline —
+     the static rect inside the SVG fills all trough areas so no large cream zones */
 }
 .fixed-wave svg {
   position: absolute;
