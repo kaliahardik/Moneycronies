@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=12" />
+  <link rel="stylesheet" href="styles/main.css?v=13" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -27,19 +27,6 @@
   <div class="fixed-wave" aria-hidden="true">
     <svg viewBox="0 0 1440 52" preserveAspectRatio="none"
          xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Wave 1 fill: opaque navy at crests, fades to transparent at bottom -->
-        <linearGradient id="waveFade" x1="0" y1="0" x2="0" y2="52" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stop-color="#062d52" stop-opacity="1"/>
-          <stop offset="55%" stop-color="#062d52" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="#062d52" stop-opacity="0"/>
-        </linearGradient>
-        <!-- Wave 2 fill: lighter swell, also fades at bottom -->
-        <linearGradient id="wave2Fade" x1="0" y1="28" x2="0" y2="52" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stop-color="#0a2d4e" stop-opacity="0.55"/>
-          <stop offset="100%" stop-color="#0a2d4e" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
 
       <!-- Wave 1 — primary crashing wave, right → left, 14 s -->
       <g>
@@ -62,7 +49,7 @@
                  C2470,40 2510,20 2550,8  C2584,2  2606,6  2634,14
                  C2662,22 2688,36 2748,38 C2795,40 2840,38 2880,36
                  L2880,52 L0,52 Z"
-              fill="url(#waveFade)"/>
+              fill="#062d52"/>
 
         <!-- White foam — highlights the crest of each wave -->
         <path d="M0,36
@@ -110,7 +97,7 @@
                  C2565,8  2592,14 2632,24 C2672,32 2702,42 2780,44
                  C2825,44 2855,42 2880,40
                  L2880,52 L0,52 Z"
-              fill="url(#wave2Fade)"/>
+              fill="rgba(10,45,78,0.55)"/>
       </g>
 
     </svg>
@@ -497,6 +484,12 @@
 
   <!-- ── Footer ── -->
   <footer class="site-footer">
+    <!-- Decorative chest band — metal reinforcement strip with rivets and lock -->
+    <div class="chest-band" aria-hidden="true">
+      <span class="chest-rivet"></span>
+      <span class="chest-lock"></span>
+      <span class="chest-rivet"></span>
+    </div>
     <div class="footer-logo">Money<span>cronies</span></div>
     <p class="footer-tagline">Dive Deeper Into Businesses</p>
     <nav class="footer-nav" aria-label="Footer navigation">

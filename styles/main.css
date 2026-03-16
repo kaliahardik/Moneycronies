@@ -97,24 +97,22 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: var(--green); }
 
-/* Fixed wave bar — sits right below the nav, blends into the ocean */
+/* Fixed wave bar — sits right below the nav, blends seamlessly into the ocean */
 .fixed-wave {
   position: fixed;
-  top: 56px;      /* flush with nav bottom */
+  top: 56px;
   left: 0;
   right: 0;
-  height: 64px;   /* tall enough for the fade to breathe */
+  height: 80px;    /* tall so the fade has room to breathe */
   z-index: 99;
   overflow: hidden;
   pointer-events: none;
-  /* Cream at top (matches nav), fades to transparent so the ocean
-     shows through — eliminates the hard horizontal cut line */
-  background: linear-gradient(
-    to bottom,
-    var(--cream) 0%,
-    var(--cream) 26%,
-    transparent  66%
-  );
+  background: var(--cream);  /* cream fills the space above the wave crests */
+  /* CSS mask fades the ENTIRE div (background + SVG) to transparent at the
+     bottom — this is the correct way to get a seamless ocean blend.
+     The wave shapes dissolve naturally into the ocean surface below. */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 32%, transparent 78%);
+          mask-image: linear-gradient(to bottom, black 0%, black 32%, transparent 78%);
 }
 .fixed-wave svg {
   position: absolute;
@@ -592,9 +590,10 @@ img { max-width: 100%; display: block; }
     to bottom,
     #041c35  0%,
     #062d52 30%,
-    #062d52 62%,
-    #0d1a10 82%,   /* deep mossy green — ocean floor sediment */
-    #0e1206 100%   /* dark earthy wood — treasure chest base */
+    #062d52 60%,
+    #0d1408 78%,   /* deep forest floor — sediment and silt */
+    #150f04 92%,   /* warm dark wood — chest begins */
+    #1a1005 100%   /* exactly matches footer top — seamless join */
   );
   overflow: hidden;
 }
@@ -1019,51 +1018,105 @@ img { max-width: 100%; display: block; }
 .contact-link:hover { color: var(--green); }
 .contact-link svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--green); }
 
-/* ── Footer — treasure chest at the ocean floor ── */
+/* ── Footer — sunken treasure chest ── */
 .site-footer {
-  padding: 52px 24px 44px;
+  padding: 64px 24px 48px;
   position: relative;
-  /* Dark warm wood — like the hull of a sunken chest */
-  background: linear-gradient(to bottom, #0e1206 0%, #120e04 50%, #0b0a03 100%);
-  color: rgba(201,168,76,0.40);
   text-align: center;
   overflow: hidden;
+  /* Warm dark wood: honey-amber undertones, not cold black */
+  background:
+    /* Central glow — warm light emanating from the gold treasure */
+    radial-gradient(ellipse 70% 55% at 50% 20%, rgba(201,140,30,0.13) 0%, transparent 65%),
+    /* Subtle wood-grain texture lines */
+    repeating-linear-gradient(
+      91deg,
+      rgba(201,150,50,0.025) 0px, rgba(201,150,50,0.025) 1px,
+      transparent 1px, transparent 8px
+    ),
+    /* Main wood gradient — rich dark brown, not flat black */
+    linear-gradient(to bottom, #1a1005 0%, #150e04 35%, #110c03 65%, #0a0702 100%);
+  color: rgba(201,168,76,0.40);
 }
-/* Gold band at top — the metal clasp of the chest */
-.site-footer::before {
-  content: '';
+
+/* ── Chest band — the horizontal metal reinforcement strip ── */
+.chest-band {
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 1px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  /* The strip itself: dark metal with a bright centre highlight */
   background: linear-gradient(
-    to right,
-    transparent          0%,
-    rgba(201,168,76,0.6) 20%,
-    rgba(248,230,180,0.5) 50%,
-    rgba(201,168,76,0.6) 80%,
-    transparent          100%
+    to bottom,
+    rgba(201,168,76,0.22) 0%,
+    rgba(201,168,76,0.10) 60%,
+    transparent 100%
   );
+  border-top: 2px solid rgba(220,185,85,0.75);
+  box-shadow: 0 2px 10px rgba(201,168,76,0.20);
 }
+
+/* Rivets — round bolts on the band */
+.chest-rivet {
+  display: block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, rgba(255,225,100,0.95), rgba(190,145,45,0.85) 55%, rgba(120,88,20,0.7));
+  box-shadow: 0 0 6px rgba(201,168,76,0.55), inset 0 1px 2px rgba(255,255,255,0.40);
+  margin: 0 120px;
+}
+
+/* Centre lock — the keyhole boss */
+.chest-lock {
+  display: block;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, rgba(255,230,110,1), rgba(200,155,50,0.90) 50%, rgba(140,100,20,0.80));
+  box-shadow:
+    0 0 14px rgba(201,168,76,0.65),
+    0 0 5px  rgba(255,215,80,0.40),
+    inset 0 2px 3px rgba(255,255,255,0.50);
+}
+/* Keyhole slot on the lock */
+.chest-lock::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -30%);
+  width: 5px; height: 8px;
+  background: rgba(80,50,8,0.75);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 4px 0 rgba(80,50,8,0.75);
+}
+
 .footer-logo {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--gold);
-  text-shadow: 0 0 24px rgba(201,168,76,0.30);
-  margin-bottom: 8px;
+  text-shadow: 0 0 22px rgba(201,168,76,0.45), 0 2px 4px rgba(0,0,0,0.60);
+  margin-bottom: 6px;
 }
-.footer-logo span { color: rgba(201,168,76,0.65); }
+.footer-logo span { color: rgba(255,210,80,0.80); }
+
 .footer-tagline {
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
+  font-size: 0.76rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(201,168,76,0.38);
-  margin-bottom: 24px;
+  color: rgba(201,168,76,0.40);
+  margin-bottom: 28px;
 }
+
 .footer-nav { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 28px; }
-.footer-nav a { font-size: 0.78rem; color: rgba(201,168,76,0.32); transition: color var(--transition); }
+.footer-nav a { font-size: 0.76rem; color: rgba(201,168,76,0.30); transition: color var(--transition); }
 .footer-nav a:hover { color: var(--gold); }
-.footer-copy { font-size: 0.72rem; color: rgba(201,168,76,0.24); }
+.footer-copy { font-size: 0.70rem; color: rgba(201,168,76,0.20); }
 
 /* ============================================================
    ANIMATIONS & TRANSITIONS
