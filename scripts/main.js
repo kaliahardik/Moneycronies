@@ -340,3 +340,279 @@ $$('.article-card').forEach(card => {
   });
 });
 
+/* ============================================================
+   9. WAVE CANVAS — Organic sinusoidal ocean surface
+   ─────────────────────────────────────────────────────────────
+   4 wave layers rendered back-to-front. Each layer is the sum
+   of 3 sinusoids with different frequencies and speeds — some
+   running left, some right — creating genuine interference that
+   never looks mechanical or repeating.
+
+   Architecture:
+   · Canvas fills the .fixed-wave div (160 px tall, full width)
+   · Above wave crests → transparent → cream nav bleeds through
+   · Below wave surface → navy→transparent gradient → seamless ocean
+   · Front layer gets foam caps + drift particles at crests
+   · Surface glint dots shimmer using per-point sine clock
+   ============================================================ */
+(function initWaves() {
+  const canvas = document.getElementById('waveCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let W = 0, H = 0;
+
+  /* ── Resize: handle devicePixelRatio for crisp HiDPI rendering ── */
+  function resize() {
+    const dpr  = window.devicePixelRatio || 1;
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  /* ──────────────────────────────────────────────────────────
+     Wave layer definitions — listed back (index 0) to front.
+
+     Each layer has:
+       baseY  — resting surface as a fraction of canvas height
+       comps  — array of sinusoidal components {A, k, ω, φ}
+                A  = amplitude in px
+                k  = spatial frequency (rad/px)
+                ω  = temporal frequency (rad/ms); negative = travels right→left
+                φ  = initial phase offset (rad)
+       r,g,b  — fill colour
+       alpha  — base fill opacity
+       foam   — whether to draw breaking foam on this layer
+
+     Wave physics note: real deep-water ocean waves have a dispersion
+     relation ω² = g·k. We don't enforce this strictly but the relative
+     speeds are tuned so shorter waves run faster, which looks natural.
+  ────────────────────────────────────────────────────────── */
+  const LAYERS = [
+    /* ── Layer 0: deep back swell (slowest, largest) ── */
+    {
+      baseY: 0.50,
+      comps: [
+        { A: 16, k: 0.00620, ω:  0.00040 },
+        { A:  9, k: 0.01050, ω: -0.00065, φ: 1.84 },
+        { A:  5, k: 0.01880, ω:  0.00095, φ: 3.70 },
+      ],
+      r: 3,  g: 32, b: 64,  alpha: 0.92,
+      foam: false,
+    },
+    /* ── Layer 1: secondary swell ── */
+    {
+      baseY: 0.44,
+      comps: [
+        { A: 18, k: 0.00540, ω:  0.00054 },
+        { A: 11, k: 0.00920, ω: -0.00085, φ: 2.42 },
+        { A:  6, k: 0.01660, ω:  0.00118, φ: 0.92 },
+      ],
+      r: 5,  g: 40, b: 76,  alpha: 0.80,
+      foam: false,
+    },
+    /* ── Layer 2: mid-water swell ── */
+    {
+      baseY: 0.38,
+      comps: [
+        { A: 20, k: 0.00470, ω:  0.00070 },
+        { A: 12, k: 0.00830, ω: -0.00105, φ: 1.25 },
+        { A:  7, k: 0.01440, ω:  0.00148, φ: 4.10 },
+      ],
+      r: 7,  g: 50, b: 92,  alpha: 0.68,
+      foam: false,
+    },
+    /* ── Layer 3: front surface (fastest, with foam) ── */
+    {
+      baseY: 0.33,
+      comps: [
+        { A: 22, k: 0.00410, ω:  0.00088 },
+        { A: 13, k: 0.00740, ω: -0.00132, φ: 0.60 },
+        { A:  8, k: 0.01320, ω:  0.00182, φ: 2.92 },
+      ],
+      r: 10, g: 60, b: 108, alpha: 0.55,
+      foam: true,
+    },
+  ];
+
+  /* ── Evaluate a layer's surface y at horizontal position x and time t ── */
+  function surfaceY(layer, x, t) {
+    let y = layer.baseY * H;
+    for (const c of layer.comps) {
+      y += c.A * Math.sin(c.k * x + c.ω * t + (c.φ || 0));
+    }
+    return y;
+  }
+
+  /* ── Draw one wave layer as a filled shape with a vertical gradient ── */
+  function drawLayer(layer, t) {
+    /* Gradient: solid navy at the wave crest zone → transparent at canvas bottom */
+    const topY = (layer.baseY - 0.20) * H;
+    const grad = ctx.createLinearGradient(0, topY, 0, H);
+    const { r, g, b, alpha: a } = layer;
+    grad.addColorStop(0,    `rgba(${r},${g},${b},${a})`);
+    grad.addColorStop(0.42, `rgba(${r},${g},${b},${(a * 0.80).toFixed(3)})`);
+    grad.addColorStop(0.75, `rgba(${r},${g},${b},${(a * 0.38).toFixed(3)})`);
+    grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    const step = 3;
+    for (let x = 0; x <= W; x += step) {
+      ctx.lineTo(x, surfaceY(layer, x, t));
+    }
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  /* ── Foam particle pool ── */
+  const particles = [];
+  const MAX_PARTICLES = 120;
+
+  function spawnParticle(x, y) {
+    if (particles.length >= MAX_PARTICLES) return;
+    particles.push({
+      x,
+      y,
+      vx: (Math.random() - 0.5) * 1.1,
+      vy: -(Math.random() * 0.55 + 0.15),
+      r:  Math.random() * 2.8 + 1.0,
+      life: 1.0,
+      decay: Math.random() * 0.007 + 0.003,
+    });
+  }
+
+  function tickParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x    += p.vx;
+      p.y    += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${(p.life * 0.52).toFixed(3)})`;
+      ctx.fill();
+    }
+  }
+
+  /* ── Draw foam caps and breaking streaks on the front wave layer ── */
+  function drawFoam(layer, t) {
+    const step    = 5;
+    const prevArr = []; // cache previous y values for crest detection
+
+    for (let x = step; x < W - step; x += step) {
+      const yPrev = surfaceY(layer, x - step, t);
+      const yCurr = surfaceY(layer, x,         t);
+      const yNext = surfaceY(layer, x + step,  t);
+
+      /* Local minimum in y = wave crest (y increases downward) */
+      if (yCurr < yPrev && yCurr < yNext) {
+        /* Pulsing foam opacity — each crest surges at its own beat */
+        const pulse = 0.35 + 0.50 * (Math.sin(t * 0.0014 + x * 0.038) + 1) * 0.5;
+
+        /* Foam cap ellipse at crest peak */
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(x, yCurr - 1.5, 16, 5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${(pulse * 0.50).toFixed(3)})`;
+        ctx.fill();
+        ctx.restore();
+
+        /* Breaking streak — dashed arc on the steep front face */
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x - 26, yCurr + 9);
+        ctx.bezierCurveTo(x - 12, yCurr + 2, x - 3, yCurr - 4, x + 10, yCurr + 3);
+        ctx.strokeStyle = `rgba(255,255,255,${(pulse * 0.44).toFixed(3)})`;
+        ctx.lineWidth   = 2.6;
+        ctx.lineCap     = 'round';
+        ctx.setLineDash([8, 3, 3, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        /* Secondary trailing streak further back */
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + 8, yCurr + 4);
+        ctx.bezierCurveTo(x + 20, yCurr + 1, x + 32, yCurr + 5, x + 44, yCurr + 10);
+        ctx.strokeStyle = `rgba(255,255,255,${(pulse * 0.22).toFixed(3)})`;
+        ctx.lineWidth   = 1.6;
+        ctx.lineCap     = 'round';
+        ctx.setLineDash([5, 4, 2, 7]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        /* Spray droplet above tallest crests */
+        if (yCurr < layer.baseY * H - 16) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.ellipse(x + 2, yCurr - 5, 7, 2.5, -0.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${(pulse * 0.30).toFixed(3)})`;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        /* Probabilistically spawn drift particles at active crests */
+        if (Math.random() < 0.045) {
+          spawnParticle(x + (Math.random() - 0.5) * 10, yCurr - 1);
+        }
+      }
+    }
+
+    /* Render and age all drift particles */
+    tickParticles();
+  }
+
+  /* ── Surface glints: tiny shimmer dots that ride the front wave ── */
+  const GLINT_COUNT = 18;
+  const glints = Array.from({ length: GLINT_COUNT }, (_, i) => ({
+    xFrac:  i / GLINT_COUNT + (Math.random() * 0.5 / GLINT_COUNT), // evenly-ish distributed
+    phase:  Math.random() * Math.PI * 2,
+    speed:  0.0018 + Math.random() * 0.0024,
+  }));
+
+  function drawGlints(frontLayer, t) {
+    for (const g of glints) {
+      const x     = (g.xFrac * W * 1.4) % W;   // wrap & stretch for variety
+      const y     = surfaceY(frontLayer, x, t);
+      const alpha = 0.25 + 0.65 * (Math.sin(t * g.speed + g.phase) + 1) * 0.5;
+      if (alpha < 0.15) continue;
+      ctx.beginPath();
+      ctx.arc(x, y - 1.5, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+      ctx.fill();
+    }
+  }
+
+  /* ── Main animation loop ── */
+  let startTime = null;
+
+  function frame(ts) {
+    if (!startTime) startTime = ts;
+    const t = ts - startTime;
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* Draw all layers back → front */
+    for (const layer of LAYERS) drawLayer(layer, t);
+
+    /* Foam and glints only on the front layer */
+    const front = LAYERS[LAYERS.length - 1];
+    drawFoam(front, t);
+    drawGlints(front, t);
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}());
+

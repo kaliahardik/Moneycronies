@@ -97,25 +97,26 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: var(--green); }
 
-/* Fixed wave bar */
+/* Fixed wave bar — canvas-based organic ocean */
 .fixed-wave {
   position: fixed;
   top: 56px;
   left: 0;
   right: 0;
-  height: 140px;
+  height: 160px;
   z-index: 99;
   overflow: hidden;
   pointer-events: none;
   background: var(--cream);
-  /* Cream is only ever visible for ~36px above the ocean surface baseline —
-     the static rect inside the SVG fills all trough areas so no large cream zones */
+  /* Canvas is transparent above wave crests → cream shows through.
+     Canvas draws the navy ocean below the surface → fades to transparent at 160px. */
 }
-.fixed-wave svg {
+#waveCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  display: block;
 }
 
 /* ══════════════════════════════════════════════════

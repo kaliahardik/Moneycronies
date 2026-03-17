@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moneycronies — Dive Deeper Into Businesses</title>
   <meta name="description" content="Value investing research, deep-dive analyses, and stock theses by an MBA student turned investor." />
-  <link rel="stylesheet" href="styles/main.css?v=16" />
+  <link rel="stylesheet" href="styles/main.css?v=17" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -23,139 +23,9 @@
     </ul>
   </nav>
 
-  <!-- ── Fixed Wave Bar ── -->
+  <!-- ── Fixed Wave Bar — canvas-based organic ocean ── -->
   <div class="fixed-wave" aria-hidden="true">
-    <!--
-      viewBox 0 0 1440 140 · div height 140px · background: cream
-      ─────────────────────────────────────────────────────────────
-      KEY DESIGN: a static <rect> at y=36 fills ALL trough areas with
-      a navy→transparent gradient. The animated wave crests poke ABOVE
-      y=36 into the thin cream "sky". Maximum cream visible = 36px.
-      At the bottom (y=140) the gradient is 0-opacity → seamless ocean.
-      ─────────────────────────────────────────────────────────────
-    -->
-    <svg viewBox="0 0 1440 140" preserveAspectRatio="none"
-         xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- One shared gradient: solid navy at y=36 (ocean surface), transparent at y=140 -->
-        <linearGradient id="seaFill" x1="0" y1="36" x2="0" y2="140"
-                        gradientUnits="userSpaceOnUse">
-          <stop offset="0%"   stop-color="#062d52" stop-opacity="1"/>
-          <stop offset="52%"  stop-color="#062d52" stop-opacity="0.88"/>
-          <stop offset="80%"  stop-color="#062d52" stop-opacity="0.34"/>
-          <stop offset="100%" stop-color="#062d52" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="sea2Fill" x1="0" y1="36" x2="0" y2="140"
-                        gradientUnits="userSpaceOnUse">
-          <stop offset="0%"   stop-color="#083460" stop-opacity="0.58"/>
-          <stop offset="55%"  stop-color="#083460" stop-opacity="0.44"/>
-          <stop offset="85%"  stop-color="#083460" stop-opacity="0.12"/>
-          <stop offset="100%" stop-color="#083460" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-
-      <!--
-        Static ocean base — covers the full viewport width from y=36 downward.
-        This fills every trough gap so cream only shows for ≤36px above the
-        ocean surface, regardless of where the animated wave troughs dip to.
-      -->
-      <rect x="0" y="36" width="1440" height="104" fill="url(#seaFill)"/>
-
-      <!-- ══ Wave 2 — secondary swell, left→right, 22 s ══
-           Crests at y≈22–26 (gentler, fill gaps between W1 crests) -->
-      <g>
-        <animateTransform attributeName="transform" attributeType="XML"
-          type="translate" from="-1440,0" to="0,0"
-          dur="22s" repeatCount="indefinite"/>
-        <path d="
-          M0,36
-          C100,36  240,24  280,24  C312,23  382,36  412,36
-          C482,36  576,22  612,22  C646,21  722,36  752,36
-          C822,36  914,20  952,20  C987,19  1064,36  1092,36
-          C1168,36  1272,24  1312,24  C1346,23  1432,36  1440,36
-          C1540,36  1680,24  1720,24  C1752,23  1822,36  1852,36
-          C1922,36  2016,22  2052,22  C2086,21  2162,36  2192,36
-          C2262,36  2354,20  2392,20  C2427,19  2504,36  2532,36
-          C2608,36  2712,24  2752,24  C2786,23  2872,36  2880,36
-          L2880,140 L0,140 Z"
-          fill="url(#sea2Fill)"/>
-        <!-- Subtle foam on secondary crests -->
-        <path d="
-          M248,26  C262,23  275,23  280,24  C292,24  308,29  322,36
-          M580,24  C594,21  606,21  612,22  C624,22  640,27  654,36
-          M922,22  C935,19  945,19  952,20  C964,20  980,25  994,36
-          M1280,26 C1294,23 1306,23 1312,24 C1324,24 1340,29 1354,36
-          M1688,26 C1702,23 1715,23 1720,24 C1732,24 1748,29 1762,36
-          M2020,24 C2034,21 2046,21 2052,22 C2064,22 2080,27 2094,36
-          M2362,22 C2375,19 2385,19 2392,20 C2404,20 2420,25 2434,36
-          M2720,26 C2734,23 2746,23 2752,24 C2764,24 2780,29 2794,36"
-          fill="none" stroke="rgba(255,255,255,0.26)"
-          stroke-width="1.8" stroke-dasharray="10 6 3 4"
-          stroke-linecap="round"/>
-      </g>
-
-      <!-- ══ Wave 1 — primary swell, right→left, 14 s ══
-           Asymmetric crests: steep LEFT face (~80–120 px run),
-           gentle RIGHT slope (~180–210 px run).
-           Tile edges at y=36. Crests at y=8–13 (28–27 px above surface).
-           Static rect fills all trough areas below y=36. -->
-      <g>
-        <animateTransform attributeName="transform" attributeType="XML"
-          type="translate" from="0,0" to="-1440,0"
-          dur="14s" repeatCount="indefinite"/>
-        <path d="
-          M0,36
-          C26,36  118,10  130,10  C154,10  322,36  342,36
-          C372,36  480,13  492,13  C514,13  662,36  682,36
-          C714,36  834,8   846,8   C868,8   1000,36  1022,36
-          C1058,36  1188,12  1202,12  C1220,12  1342,36  1362,36
-          C1382,36  1422,36  1440,36
-          C1466,36  1558,10  1570,10  C1594,10  1762,36  1782,36
-          C1812,36  1920,13  1932,13  C1954,13  2102,36  2122,36
-          C2154,36  2274,8   2286,8   C2308,8   2440,36  2462,36
-          C2498,36  2628,12  2642,12  C2660,12  2782,36  2802,36
-          C2822,36  2862,36  2880,36
-          L2880,140 L0,140 Z"
-          fill="url(#seaFill)"/>
-
-        <!-- Foam on the steep front face (the breaking/curling part of each crest) -->
-        <path d="
-          M88,32   C102,22  116,13  130,10  C141,9   153,11  166,20
-          M450,32  C465,22  480,14  492,13  C503,12  515,14  528,22
-          M804,32  C820,20  834,11  846,8   C857,7   868,10  882,18
-          M1160,32 C1176,22 1190,14 1202,12 C1213,11 1225,13 1240,22
-          M1528,32 C1542,22 1556,13 1570,10 C1581,9  1593,11 1606,20
-          M1890,32 C1905,22 1920,14 1932,13 C1943,12 1955,14 1968,22
-          M2244,32 C2260,20 2274,11 2286,8  C2297,7  2308,10 2322,18
-          M2600,32 C2616,22 2630,14 2642,12 C2653,11 2665,13 2680,22"
-          fill="none"
-          stroke="rgba(255,255,255,0.85)"
-          stroke-width="3.2"
-          stroke-dasharray="22 4 4 3 8 5 3 4"
-          stroke-linecap="round"/>
-
-        <!-- Foam cap at each crest tip -->
-        <ellipse cx="130"  cy="8"  rx="30" ry="6"   fill="rgba(255,255,255,0.42)"/>
-        <ellipse cx="492"  cy="11" rx="25" ry="5"   fill="rgba(255,255,255,0.34)"/>
-        <ellipse cx="846"  cy="6"  rx="34" ry="6.5" fill="rgba(255,255,255,0.46)"/>
-        <ellipse cx="1202" cy="10" rx="28" ry="5.5" fill="rgba(255,255,255,0.38)"/>
-        <ellipse cx="1570" cy="8"  rx="30" ry="6"   fill="rgba(255,255,255,0.42)"/>
-        <ellipse cx="1932" cy="11" rx="25" ry="5"   fill="rgba(255,255,255,0.34)"/>
-        <ellipse cx="2286" cy="6"  rx="34" ry="6.5" fill="rgba(255,255,255,0.46)"/>
-        <ellipse cx="2642" cy="10" rx="28" ry="5.5" fill="rgba(255,255,255,0.38)"/>
-
-        <!-- Spray droplets above the two tallest crests -->
-        <ellipse cx="128"  cy="2"  rx="14" ry="3.2" fill="rgba(255,255,255,0.26)"/>
-        <ellipse cx="133"  cy="-3" rx="7"  ry="2"   fill="rgba(255,255,255,0.16)"/>
-        <ellipse cx="844"  cy="0"  rx="16" ry="3.8" fill="rgba(255,255,255,0.24)"/>
-        <ellipse cx="849"  cy="-5" rx="8"  ry="2.2" fill="rgba(255,255,255,0.15)"/>
-        <ellipse cx="1568" cy="2"  rx="14" ry="3.2" fill="rgba(255,255,255,0.26)"/>
-        <ellipse cx="1573" cy="-3" rx="7"  ry="2"   fill="rgba(255,255,255,0.16)"/>
-        <ellipse cx="2284" cy="0"  rx="16" ry="3.8" fill="rgba(255,255,255,0.24)"/>
-        <ellipse cx="2289" cy="-5" rx="8"  ry="2.2" fill="rgba(255,255,255,0.15)"/>
-      </g>
-
-    </svg>
+    <canvas id="waveCanvas"></canvas>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
