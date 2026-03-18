@@ -107,9 +107,19 @@ img { max-width: 100%; display: block; }
   z-index: 99;
   overflow: hidden;
   pointer-events: none;
-  background: var(--cream);
-  /* Canvas is transparent above wave crests → cream shows through.
-     Canvas draws the navy ocean below the surface → fades to transparent at 160px. */
+  /*
+    Gradient background: cream only at the very top (wave crests poke into it),
+    then transitions to deep navy so the bottom of the bar merges with the ocean.
+    24px ≈ max wave crest height; beyond that cream must never show.
+    The navy at the bottom exactly matches the ocean hero's surface colour.
+  */
+  background: linear-gradient(
+    to bottom,
+    var(--cream)  0px,
+    var(--cream) 22px,
+    #062d52      62%,
+    #041c35     100%
+  );
 }
 #waveCanvas {
   position: absolute;

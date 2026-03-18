@@ -450,14 +450,20 @@ $$('.article-card').forEach(card => {
 
   /* ── Draw one wave layer as a filled shape with a vertical gradient ── */
   function drawLayer(layer, t) {
-    /* Gradient: solid navy at the wave crest zone → transparent at canvas bottom */
+    /*
+      Gradient: solid navy at the wave surface, tapering toward the bottom.
+      We do NOT go all the way to alpha=0 — a residual 0.04 ensures the
+      CSS background (navy) shows through cleanly rather than the cream.
+      This keeps the bottom of the wave bar seamlessly blue.
+    */
     const topY = (layer.baseY - 0.20) * H;
     const grad = ctx.createLinearGradient(0, topY, 0, H);
     const { r, g, b, alpha: a } = layer;
     grad.addColorStop(0,    `rgba(${r},${g},${b},${a})`);
-    grad.addColorStop(0.42, `rgba(${r},${g},${b},${(a * 0.80).toFixed(3)})`);
-    grad.addColorStop(0.75, `rgba(${r},${g},${b},${(a * 0.38).toFixed(3)})`);
-    grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
+    grad.addColorStop(0.40, `rgba(${r},${g},${b},${(a * 0.82).toFixed(3)})`);
+    grad.addColorStop(0.72, `rgba(${r},${g},${b},${(a * 0.46).toFixed(3)})`);
+    grad.addColorStop(0.90, `rgba(${r},${g},${b},${(a * 0.18).toFixed(3)})`);
+    grad.addColorStop(1,    `rgba(${r},${g},${b},0.04)`);
 
     ctx.beginPath();
     ctx.moveTo(0, H);
