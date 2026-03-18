@@ -332,12 +332,90 @@ document.addEventListener('click', (e) => {
 });
 
 /* ============================================================
-   7. ARTICLE CARD hover ripple (tactile delight)
+   7. ARTICLE CARD — turtle trail curve nudge
+   Draws an animated dotted bezier from the cursor toward the
+   READ → button, with organic wobble to feel alive.
    ============================================================ */
 $$('.article-card').forEach(card => {
-  card.addEventListener('mouseenter', () => {
-    card.style.setProperty('--hover-scale', '1');
+  card.style.setProperty('--hover-scale', '1');
+
+  // Inject SVG overlay
+  const ns  = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.classList.add('card-trail-svg');
+  svg.setAttribute('aria-hidden', 'true');
+
+  // Arrow marker pointing toward READ
+  const defs   = document.createElementNS(ns, 'defs');
+  const marker = document.createElementNS(ns, 'marker');
+  const markId = 'trail-arrow-' + Math.random().toString(36).slice(2, 7);
+  marker.setAttribute('id', markId);
+  marker.setAttribute('markerWidth', '6');
+  marker.setAttribute('markerHeight', '6');
+  marker.setAttribute('refX', '3');
+  marker.setAttribute('refY', '3');
+  marker.setAttribute('orient', 'auto');
+  const arrowPoly = document.createElementNS(ns, 'polygon');
+  arrowPoly.setAttribute('points', '0,1 6,3 0,5');
+  arrowPoly.setAttribute('fill', '#1A6B3C');
+  marker.appendChild(arrowPoly);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+
+  const path = document.createElementNS(ns, 'path');
+  path.classList.add('card-trail-path');
+  path.setAttribute('marker-end', `url(#${markId})`);
+  svg.appendChild(path);
+  card.appendChild(svg);
+
+  let wiggleFrame = null;
+  let noiseT = Math.random() * 100;
+  let lastMx = card.offsetWidth  * 0.35;
+  let lastMy = card.offsetHeight * 0.35;
+
+  function getReadPos() {
+    const btn      = card.querySelector('.card-read-more');
+    const cardRect = card.getBoundingClientRect();
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      return { x: r.left - cardRect.left + r.width * 0.5,
+               y: r.top  - cardRect.top  + r.height * 0.5 };
+    }
+    return { x: card.offsetWidth - 28, y: card.offsetHeight - 18 };
+  }
+
+  function drawCurve(mx, my) {
+    noiseT += 0.018;
+    const { x: tx, y: ty } = getReadPos();
+    const dx  = tx - mx, dy = ty - my;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    // Perpendicular unit vector for lateral wobble
+    const nx = -dy / len, ny = dx / len;
+    const w1 = Math.sin(noiseT)         * Math.min(len * 0.28, 44);
+    const w2 = Math.cos(noiseT * 0.75 + 1.5) * Math.min(len * 0.20, 32);
+    const cp1x = mx + dx * 0.33 + nx * w1;
+    const cp1y = my + dy * 0.33 + ny * w1;
+    const cp2x = mx + dx * 0.67 + nx * w2;
+    const cp2y = my + dy * 0.67 + ny * w2;
+    // Stop a few px short so arrowhead sits on the button, not behind it
+    const ex = tx - (dx / len) * 10;
+    const ey = ty - (dy / len) * 10;
+    path.setAttribute('d', `M${mx},${my} C${cp1x},${cp1y} ${cp2x},${cp2y} ${ex},${ey}`);
+  }
+
+  function startWiggle() {
+    function tick() { drawCurve(lastMx, lastMy); wiggleFrame = requestAnimationFrame(tick); }
+    tick();
+  }
+  function stopWiggle() { cancelAnimationFrame(wiggleFrame); }
+
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    lastMx = e.clientX - r.left;
+    lastMy = e.clientY - r.top;
   });
+  card.addEventListener('mouseenter', startWiggle);
+  card.addEventListener('mouseleave', stopWiggle);
 });
 
 /* ============================================================
