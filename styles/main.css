@@ -1263,6 +1263,22 @@ img { max-width: 100%; display: block; }
   margin-top: -1em;
   margin-bottom: 1.6em;
 }
+.article-body figure {
+  margin: 2.4em 0;
+}
+.article-body figure img {
+  width: 100%;
+  border-radius: var(--radius);
+  display: block;
+}
+.article-body figcaption {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  color: var(--ink-light);
+  text-align: center;
+  margin-top: 10px;
+}
+.article-body figcaption a { color: var(--blue); text-decoration: underline; }
 
 /* Footer CTA */
 .article-footer-cta {
