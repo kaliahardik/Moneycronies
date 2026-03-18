@@ -771,7 +771,7 @@ img { max-width: 100%; display: block; }
   height: 4px;
   background: linear-gradient(90deg, var(--green), var(--blue));
 }
-.card-body { padding: 28px; }
+.card-body { padding: 28px; position: relative; z-index: 2; }
 .card-tag {
   font-size: 0.7rem;
   font-weight: 700;
@@ -816,18 +816,22 @@ img { max-width: 100%; display: block; }
 }
 .article-card:hover .card-read-more { gap: 8px; }
 
-/* ── Card turtle trail SVG ── */
-.card-trail-svg {
+/* ── Card turtle trail SVGs ── */
+/* curve SVG sits *behind* text; rect SVG floats *above* text */
+.card-trail-svg,
+.card-trail-rect-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 5;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
-.article-card:hover .card-trail-svg { opacity: 1; }
+.card-trail-svg      { z-index: 1; }   /* behind card-body (z-index:2) */
+.card-trail-rect-svg { z-index: 3; }   /* above card-body */
+.article-card:hover .card-trail-svg,
+.article-card:hover .card-trail-rect-svg { opacity: 1; }
 .card-trail-path {
   fill: none;
   stroke: var(--green);
@@ -835,6 +839,13 @@ img { max-width: 100%; display: block; }
   stroke-dasharray: 4 7;
   stroke-linecap: round;
   animation: trail-march 0.55s linear infinite;
+}
+.card-trail-rect {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  animation: trail-march 0.8s linear infinite reverse;
 }
 @keyframes trail-march {
   to { stroke-dashoffset: -11; }
