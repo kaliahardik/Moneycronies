@@ -401,7 +401,7 @@ $$('.article-card').forEach(card => {
         { A:  9, k: 0.01050, ω: -0.00065, φ: 1.84 },
         { A:  5, k: 0.01880, ω:  0.00095, φ: 3.70 },
       ],
-      r: 3,  g: 32, b: 64,  alpha: 0.92,
+      r: 10, g: 72, b: 120, alpha: 0.92,
       foam: false,
     },
     /* ── Layer 1: secondary swell ── */
@@ -412,7 +412,7 @@ $$('.article-card').forEach(card => {
         { A: 11, k: 0.00920, ω: -0.00085, φ: 2.42 },
         { A:  6, k: 0.01660, ω:  0.00118, φ: 0.92 },
       ],
-      r: 5,  g: 40, b: 76,  alpha: 0.80,
+      r: 15, g: 85, b: 140, alpha: 0.80,
       foam: false,
     },
     /* ── Layer 2: mid-water swell ── */
@@ -423,7 +423,7 @@ $$('.article-card').forEach(card => {
         { A: 12, k: 0.00830, ω: -0.00105, φ: 1.25 },
         { A:  7, k: 0.01440, ω:  0.00148, φ: 4.10 },
       ],
-      r: 7,  g: 50, b: 92,  alpha: 0.68,
+      r: 20, g: 98, b: 158, alpha: 0.68,
       foam: false,
     },
     /* ── Layer 3: front surface (fastest, with foam) ── */
@@ -434,7 +434,7 @@ $$('.article-card').forEach(card => {
         { A: 13, k: 0.00740, ω: -0.00132, φ: 0.60 },
         { A:  8, k: 0.01320, ω:  0.00182, φ: 2.92 },
       ],
-      r: 10, g: 60, b: 108, alpha: 0.55,
+      r: 27, g: 108, b: 168, alpha: 0.55,
       foam: true,
     },
   ];

@@ -117,8 +117,8 @@ img { max-width: 100%; display: block; }
     to bottom,
     var(--cream)  0px,
     var(--cream) 22px,
-    #062d52      62%,
-    #041c35     100%
+    #1565a8      62%,
+    #0A4D6E     100%
   );
 }
 #waveCanvas {
