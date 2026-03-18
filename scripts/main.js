@@ -333,59 +333,93 @@ document.addEventListener('click', (e) => {
 
 /* ============================================================
    7. ARTICLE CARD — turtle trail curve nudge
-   · Dotted bezier curve from cursor → READ button (behind text)
-   · Dashed rect box around READ button (above text)
-   · Organic sine wobble keeps the curve alive while hovering
+   · curveSvg inserted BEFORE .card-body  → behind text (DOM order)
+   · boxSvg   appended AFTER  .card-body  → above text  (DOM order)
+   · Curve ends with a small dot ~30px short of the READ button
+   · Box = four corner bracket marks + soft tint, spring-in on hover
    ============================================================ */
 $$('.article-card').forEach(card => {
   const ns = 'http://www.w3.org/2000/svg';
 
-  // SVG 1 — curve, sits BEHIND text (z-index:1 < card-body z-index:2)
+  /* ── SVG 1: flowing dotted curve (behind text) ── */
   const curveSvg = document.createElementNS(ns, 'svg');
   curveSvg.classList.add('card-trail-svg');
   curveSvg.setAttribute('aria-hidden', 'true');
+
   const path = document.createElementNS(ns, 'path');
   path.classList.add('card-trail-path');
   curveSvg.appendChild(path);
-  card.appendChild(curveSvg);
 
-  // SVG 2 — rect box, sits ABOVE text (z-index:3)
-  const rectSvg = document.createElementNS(ns, 'svg');
-  rectSvg.classList.add('card-trail-rect-svg');
-  rectSvg.setAttribute('aria-hidden', 'true');
-  const rect = document.createElementNS(ns, 'rect');
-  rect.classList.add('card-trail-rect');
-  rect.setAttribute('rx', '4');
-  rectSvg.appendChild(rect);
-  card.appendChild(rectSvg);
+  const dot = document.createElementNS(ns, 'circle');
+  dot.classList.add('card-trail-dot');
+  dot.setAttribute('r', '2.5');
+  curveSvg.appendChild(dot);
 
-  // Position rect box around the READ button (stable, set once on enter)
-  function positionRect() {
-    const btn = card.querySelector('.card-read-more');
-    if (!btn) return;
-    const cr = card.getBoundingClientRect();
-    const br = btn.getBoundingClientRect();
-    const pad = 5;
-    rect.setAttribute('x',      br.left - cr.left - pad);
-    rect.setAttribute('y',      br.top  - cr.top  - pad);
-    rect.setAttribute('width',  br.width  + pad * 2);
-    rect.setAttribute('height', br.height + pad * 2);
-  }
+  // Insert BEFORE .card-body so it paints behind it (DOM order)
+  const cardBody = card.querySelector('.card-body');
+  card.insertBefore(curveSvg, cardBody);
+
+  /* ── SVG 2: corner bracket box (above text) ── */
+  const boxSvg = document.createElementNS(ns, 'svg');
+  boxSvg.classList.add('card-trail-rect-svg');
+  boxSvg.setAttribute('aria-hidden', 'true');
+
+  const tint = document.createElementNS(ns, 'rect');
+  tint.setAttribute('fill', 'rgba(26,107,60,0.055)');
+  tint.setAttribute('rx', '5');
+  boxSvg.appendChild(tint);
+
+  const corners = document.createElementNS(ns, 'path');
+  corners.classList.add('card-trail-corners');
+  boxSvg.appendChild(corners);
+
+  // Append AFTER .card-body so it paints above it (DOM order)
+  card.appendChild(boxSvg);
 
   let wiggleFrame = null;
   let noiseT = Math.random() * 100;
-  let lastMx = card.offsetWidth  * 0.35;
-  let lastMy = card.offsetHeight * 0.35;
+  let lastMx = card.offsetWidth  * 0.3;
+  let lastMy = card.offsetHeight * 0.3;
 
   function getTarget() {
     const btn = card.querySelector('.card-read-more');
     const cr  = card.getBoundingClientRect();
     if (btn) {
       const br = btn.getBoundingClientRect();
-      return { x: br.left - cr.left + br.width * 0.5,
+      return { x: br.left - cr.left + br.width  * 0.5,
                y: br.top  - cr.top  + br.height * 0.5 };
     }
     return { x: card.offsetWidth - 28, y: card.offsetHeight - 18 };
+  }
+
+  function positionBox() {
+    const btn = card.querySelector('.card-read-more');
+    if (!btn) return;
+    const cr = card.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+    const pad = 8, CL = 10;
+    const x1 = br.left   - cr.left - pad;
+    const y1 = br.top    - cr.top  - pad;
+    const x2 = br.right  - cr.left + pad;
+    const y2 = br.bottom - cr.top  + pad;
+
+    tint.setAttribute('x',      x1);
+    tint.setAttribute('y',      y1);
+    tint.setAttribute('width',  x2 - x1);
+    tint.setAttribute('height', y2 - y1);
+
+    // Four L-shaped corner brackets
+    corners.setAttribute('d',
+      `M${x1+CL},${y1} L${x1},${y1} L${x1},${y1+CL} ` +
+      `M${x2-CL},${y1} L${x2},${y1} L${x2},${y1+CL} ` +
+      `M${x1},${y2-CL} L${x1},${y2} L${x1+CL},${y2} ` +
+      `M${x2},${y2-CL} L${x2},${y2} L${x2-CL},${y2}`
+    );
+
+    // Anchor spring scale to the READ button centre
+    const ox = ((br.left + br.width  * 0.5) - cr.left) / cr.width  * 100;
+    const oy = ((br.top  + br.height * 0.5) - cr.top)  / cr.height * 100;
+    boxSvg.style.transformOrigin = `${ox}% ${oy}%`;
   }
 
   function drawCurve(mx, my) {
@@ -393,21 +427,23 @@ $$('.article-card').forEach(card => {
     const { x: tx, y: ty } = getTarget();
     const dx  = tx - mx, dy = ty - my;
     const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    const nx  = -dy / len, ny = dx / len;   // perpendicular
-    const w1  = Math.sin(noiseT)              * Math.min(len * 0.28, 44);
-    const w2  = Math.cos(noiseT * 0.75 + 1.5) * Math.min(len * 0.20, 32);
+    const nx  = -dy / len, ny = dx / len;
+    const w1  = Math.sin(noiseT)               * Math.min(len * 0.28, 44);
+    const w2  = Math.cos(noiseT * 0.75 + 1.5)  * Math.min(len * 0.20, 32);
     const cp1x = mx + dx * 0.33 + nx * w1;
     const cp1y = my + dy * 0.33 + ny * w1;
     const cp2x = mx + dx * 0.67 + nx * w2;
     const cp2y = my + dy * 0.67 + ny * w2;
-    // End point just reaches the rect edge, not centre
-    const ex = tx - (dx / len) * 14;
-    const ey = ty - (dy / len) * 14;
+    // Stop 30px short — visual gap before the corner bracket box
+    const ex = tx - (dx / len) * 30;
+    const ey = ty - (dy / len) * 30;
     path.setAttribute('d', `M${mx},${my} C${cp1x},${cp1y} ${cp2x},${cp2y} ${ex},${ey}`);
+    dot.setAttribute('cx', ex);
+    dot.setAttribute('cy', ey);
   }
 
   function startWiggle() {
-    positionRect();
+    positionBox();
     function tick() { drawCurve(lastMx, lastMy); wiggleFrame = requestAnimationFrame(tick); }
     tick();
   }
