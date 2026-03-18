@@ -108,17 +108,17 @@ img { max-width: 100%; display: block; }
   overflow: hidden;
   pointer-events: none;
   /*
-    Gradient background: cream only at the very top (wave crests poke into it),
-    then transitions to deep navy so the bottom of the bar merges with the ocean.
-    24px ≈ max wave crest height; beyond that cream must never show.
-    The navy at the bottom exactly matches the ocean hero's surface colour.
+    Cream at the very top covers the gap above wave crests.
+    Below that, fade fully to transparent so the ocean SVG behind
+    shows through — eliminating any visible seam at the bar's bottom edge.
   */
   background: linear-gradient(
     to bottom,
-    var(--cream)  0px,
-    var(--cream) 22px,
-    #1565a8      62%,
-    #0A4D6E     100%
+    var(--cream)             0px,
+    var(--cream)            22px,
+    rgba(21,101,168,0.85)   45%,
+    rgba(21,101,168,0.20)   80%,
+    transparent            100%
   );
 }
 #waveCanvas {

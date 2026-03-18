@@ -462,8 +462,8 @@ $$('.article-card').forEach(card => {
     grad.addColorStop(0,    `rgba(${r},${g},${b},${a})`);
     grad.addColorStop(0.40, `rgba(${r},${g},${b},${(a * 0.82).toFixed(3)})`);
     grad.addColorStop(0.72, `rgba(${r},${g},${b},${(a * 0.46).toFixed(3)})`);
-    grad.addColorStop(0.90, `rgba(${r},${g},${b},${(a * 0.18).toFixed(3)})`);
-    grad.addColorStop(1,    `rgba(${r},${g},${b},0.04)`);
+    grad.addColorStop(0.90, `rgba(${r},${g},${b},${(a * 0.10).toFixed(3)})`);
+    grad.addColorStop(1,    `rgba(${r},${g},${b},0)`);
 
     ctx.beginPath();
     ctx.moveTo(0, H);
